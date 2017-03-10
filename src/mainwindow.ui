@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>440</width>
-    <height>417</height>
+    <width>772</width>
+    <height>546</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,110 +19,109 @@
      <rect>
       <x>10</x>
       <y>10</y>
-      <width>421</width>
-      <height>141</height>
+      <width>181</width>
+      <height>381</height>
      </rect>
     </property>
     <property name="title">
      <string>Configuração do labirinto</string>
     </property>
-    <widget class="QWidget" name="formLayoutWidget">
+    <widget class="QWidget" name="gridLayoutWidget">
      <property name="geometry">
       <rect>
        <x>10</x>
        <y>30</y>
-       <width>151</width>
-       <height>61</height>
+       <width>160</width>
+       <height>345</height>
       </rect>
      </property>
-     <layout class="QFormLayout" name="matrix">
-      <item row="0" column="0">
-       <widget class="QLabel" name="lb_lines">
-        <property name="text">
-         <string>Linhas</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QLineEdit" name="ln_lines">
-        <property name="enabled">
-         <bool>true</bool>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>16777215</width>
-          <height>233245</height>
-         </size>
-        </property>
-       </widget>
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="7" column="0">
+       <widget class="QSpinBox" name="spinBox_4"/>
       </item>
       <item row="1" column="0">
-       <widget class="QLabel" name="lb_colum">
-        <property name="text">
-         <string>Colunas</string>
-        </property>
-       </widget>
+       <widget class="QSpinBox" name="spinBox"/>
       </item>
-      <item row="1" column="1">
-       <widget class="QLineEdit" name="ln_colum"/>
-      </item>
-     </layout>
-    </widget>
-    <widget class="QWidget" name="formLayoutWidget_2">
-     <property name="geometry">
-      <rect>
-       <x>200</x>
-       <y>30</y>
-       <width>211</width>
-       <height>64</height>
-      </rect>
-     </property>
-     <layout class="QFormLayout" name="formLayout_2">
-      <item row="0" column="0">
-       <widget class="QLabel" name="label_4">
-        <property name="text">
-         <string>Custo horizontal</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QLineEdit" name="lineEdit_3"/>
-      </item>
-      <item row="1" column="0">
+      <item row="4" column="0">
        <widget class="QLabel" name="label_3">
         <property name="text">
          <string>Custo vertical</string>
         </property>
        </widget>
       </item>
-      <item row="1" column="1">
-       <widget class="QLineEdit" name="lineEdit_4"/>
-      </item>
-     </layout>
-    </widget>
-    <widget class="QWidget" name="gridLayoutWidget">
-     <property name="geometry">
-      <rect>
-       <x>120</x>
-       <y>100</y>
-       <width>291</width>
-       <height>31</height>
-      </rect>
-     </property>
-     <layout class="QGridLayout" name="gridLayout">
-      <item row="0" column="0">
-       <widget class="QPushButton" name="pushButton_3">
+      <item row="10" column="0">
+       <widget class="QPushButton" name="pb_SaveLabyrinth">
         <property name="text">
-         <string>Importar</string>
+         <string>Exportar labirinto</string>
         </property>
        </widget>
       </item>
-      <item row="0" column="1">
+      <item row="5" column="0">
+       <widget class="QSpinBox" name="spinBox_3"/>
+      </item>
+      <item row="8" column="0">
+       <spacer name="verticalSpacer">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="3" column="0">
+       <widget class="QSpinBox" name="spinBox_2"/>
+      </item>
+      <item row="9" column="0">
+       <widget class="QPushButton" name="pb_ImportLabyrinth">
+        <property name="text">
+         <string>Importar labirinto</string>
+        </property>
+       </widget>
+      </item>
+      <item row="12" column="0">
        <widget class="QPushButton" name="pushButton">
         <property name="text">
-         <string>Gerar</string>
+         <string>Start</string>
         </property>
        </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="label_2">
+        <property name="text">
+         <string>Colunas</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>Linhas</string>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="0">
+       <widget class="QLabel" name="label_4">
+        <property name="text">
+         <string>Custo horizontal</string>
+        </property>
+       </widget>
+      </item>
+      <item row="11" column="0">
+       <spacer name="verticalSpacer_3">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
+        </property>
+       </spacer>
       </item>
      </layout>
     </widget>
@@ -130,26 +129,39 @@
    <widget class="QWidget" name="widget" native="true">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>160</y>
+      <x>360</x>
+      <y>30</y>
       <width>421</width>
       <height>201</height>
      </rect>
     </property>
    </widget>
-   <zorder>groupBox</zorder>
-   <zorder>formLayoutWidget</zorder>
-   <zorder>widget</zorder>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>440</width>
+     <width>772</width>
      <height>22</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menuAbout">
+    <property name="title">
+     <string>Sobre</string>
+    </property>
+    <addaction name="actionHelp"/>
+    <addaction name="actionLicense"/>
+   </widget>
+   <widget class="QMenu" name="menuConfigura_o">
+    <property name="title">
+     <string>Labirinto</string>
+    </property>
+    <addaction name="actionImportLabyrinth"/>
+    <addaction name="actionSaveLabyrinth"/>
+   </widget>
+   <addaction name="menuConfigura_o"/>
+   <addaction name="menuAbout"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -160,6 +172,26 @@
    </attribute>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
+  <action name="actionLicense">
+   <property name="text">
+    <string>License</string>
+   </property>
+  </action>
+  <action name="actionHelp">
+   <property name="text">
+    <string>Help</string>
+   </property>
+  </action>
+  <action name="actionImportLabyrinth">
+   <property name="text">
+    <string>Importar labirinto</string>
+   </property>
+  </action>
+  <action name="actionSaveLabyrinth">
+   <property name="text">
+    <string>Salvar labirinto</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources/>
