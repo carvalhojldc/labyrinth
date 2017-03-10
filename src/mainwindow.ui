@@ -14,7 +14,7 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="QGroupBox" name="groupBox">
+   <widget class="QGroupBox" name="gb_labyrinthConfig">
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -36,30 +36,27 @@
       </rect>
      </property>
      <layout class="QGridLayout" name="gridLayout">
-      <item row="7" column="0">
-       <widget class="QSpinBox" name="spinBox_4"/>
-      </item>
-      <item row="1" column="0">
-       <widget class="QSpinBox" name="spinBox"/>
-      </item>
-      <item row="4" column="0">
-       <widget class="QLabel" name="label_3">
+      <item row="9" column="0">
+       <widget class="QLabel" name="lb_costVertical">
         <property name="text">
          <string>Custo vertical</string>
         </property>
        </widget>
       </item>
-      <item row="10" column="0">
+      <item row="8" column="0">
+       <widget class="QSpinBox" name="sb_costHorizontal"/>
+      </item>
+      <item row="1" column="0">
+       <widget class="QSpinBox" name="sb_lines"/>
+      </item>
+      <item row="13" column="0">
        <widget class="QPushButton" name="pb_SaveLabyrinth">
         <property name="text">
          <string>Exportar labirinto</string>
         </property>
        </widget>
       </item>
-      <item row="5" column="0">
-       <widget class="QSpinBox" name="spinBox_3"/>
-      </item>
-      <item row="8" column="0">
+      <item row="11" column="0">
        <spacer name="verticalSpacer">
         <property name="orientation">
          <enum>Qt::Vertical</enum>
@@ -73,44 +70,44 @@
        </spacer>
       </item>
       <item row="3" column="0">
-       <widget class="QSpinBox" name="spinBox_2"/>
+       <widget class="QSpinBox" name="sb_columns"/>
       </item>
-      <item row="9" column="0">
+      <item row="12" column="0">
        <widget class="QPushButton" name="pb_ImportLabyrinth">
         <property name="text">
          <string>Importar labirinto</string>
         </property>
        </widget>
       </item>
-      <item row="12" column="0">
-       <widget class="QPushButton" name="pushButton">
+      <item row="15" column="0">
+       <widget class="QPushButton" name="pb_start">
         <property name="text">
          <string>Start</string>
         </property>
        </widget>
       </item>
       <item row="2" column="0">
-       <widget class="QLabel" name="label_2">
+       <widget class="QLabel" name="lb_columns">
         <property name="text">
          <string>Colunas</string>
         </property>
        </widget>
       </item>
       <item row="0" column="0">
-       <widget class="QLabel" name="label">
+       <widget class="QLabel" name="lb_lines">
         <property name="text">
          <string>Linhas</string>
         </property>
        </widget>
       </item>
       <item row="6" column="0">
-       <widget class="QLabel" name="label_4">
+       <widget class="QLabel" name="lb_costHorizontal">
         <property name="text">
          <string>Custo horizontal</string>
         </property>
        </widget>
       </item>
-      <item row="11" column="0">
+      <item row="14" column="0">
        <spacer name="verticalSpacer_3">
         <property name="orientation">
          <enum>Qt::Vertical</enum>
@@ -123,18 +120,11 @@
         </property>
        </spacer>
       </item>
+      <item row="10" column="0">
+       <widget class="QSpinBox" name="sb_costVertical"/>
+      </item>
      </layout>
     </widget>
-   </widget>
-   <widget class="QWidget" name="widget" native="true">
-    <property name="geometry">
-     <rect>
-      <x>360</x>
-      <y>30</y>
-      <width>421</width>
-      <height>201</height>
-     </rect>
-    </property>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
@@ -153,14 +143,14 @@
     <addaction name="actionHelp"/>
     <addaction name="actionLicense"/>
    </widget>
-   <widget class="QMenu" name="menuConfigura_o">
+   <widget class="QMenu" name="menuConfig">
     <property name="title">
      <string>Labirinto</string>
     </property>
     <addaction name="actionImportLabyrinth"/>
     <addaction name="actionSaveLabyrinth"/>
    </widget>
-   <addaction name="menuConfigura_o"/>
+   <addaction name="menuConfig"/>
    <addaction name="menuAbout"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">

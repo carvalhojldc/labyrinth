@@ -37,26 +37,25 @@ public:
     QAction *actionImportLabyrinth;
     QAction *actionSaveLabyrinth;
     QWidget *centralWidget;
-    QGroupBox *groupBox;
+    QGroupBox *gb_labyrinthConfig;
     QWidget *gridLayoutWidget;
     QGridLayout *gridLayout;
-    QSpinBox *spinBox_4;
-    QSpinBox *spinBox;
-    QLabel *label_3;
+    QLabel *lb_costVertical;
+    QSpinBox *sb_costHorizontal;
+    QSpinBox *sb_lines;
     QPushButton *pb_SaveLabyrinth;
-    QSpinBox *spinBox_3;
     QSpacerItem *verticalSpacer;
-    QSpinBox *spinBox_2;
+    QSpinBox *sb_columns;
     QPushButton *pb_ImportLabyrinth;
-    QPushButton *pushButton;
-    QLabel *label_2;
-    QLabel *label;
-    QLabel *label_4;
+    QPushButton *pb_start;
+    QLabel *lb_columns;
+    QLabel *lb_lines;
+    QLabel *lb_costHorizontal;
     QSpacerItem *verticalSpacer_3;
-    QWidget *widget;
+    QSpinBox *sb_costVertical;
     QMenuBar *menuBar;
     QMenu *menuAbout;
-    QMenu *menuConfigura_o;
+    QMenu *menuConfig;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
 
@@ -75,10 +74,10 @@ public:
         actionSaveLabyrinth->setObjectName(QStringLiteral("actionSaveLabyrinth"));
         centralWidget = new QWidget(MainWindow);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
-        groupBox = new QGroupBox(centralWidget);
-        groupBox->setObjectName(QStringLiteral("groupBox"));
-        groupBox->setGeometry(QRect(10, 10, 181, 381));
-        gridLayoutWidget = new QWidget(groupBox);
+        gb_labyrinthConfig = new QGroupBox(centralWidget);
+        gb_labyrinthConfig->setObjectName(QStringLiteral("gb_labyrinthConfig"));
+        gb_labyrinthConfig->setGeometry(QRect(10, 10, 181, 381));
+        gridLayoutWidget = new QWidget(gb_labyrinthConfig);
         gridLayoutWidget->setObjectName(QStringLiteral("gridLayoutWidget"));
         gridLayoutWidget->setGeometry(QRect(10, 30, 160, 345));
         gridLayout = new QGridLayout(gridLayoutWidget);
@@ -86,80 +85,77 @@ public:
         gridLayout->setContentsMargins(11, 11, 11, 11);
         gridLayout->setObjectName(QStringLiteral("gridLayout"));
         gridLayout->setContentsMargins(0, 0, 0, 0);
-        spinBox_4 = new QSpinBox(gridLayoutWidget);
-        spinBox_4->setObjectName(QStringLiteral("spinBox_4"));
+        lb_costVertical = new QLabel(gridLayoutWidget);
+        lb_costVertical->setObjectName(QStringLiteral("lb_costVertical"));
 
-        gridLayout->addWidget(spinBox_4, 7, 0, 1, 1);
+        gridLayout->addWidget(lb_costVertical, 9, 0, 1, 1);
 
-        spinBox = new QSpinBox(gridLayoutWidget);
-        spinBox->setObjectName(QStringLiteral("spinBox"));
+        sb_costHorizontal = new QSpinBox(gridLayoutWidget);
+        sb_costHorizontal->setObjectName(QStringLiteral("sb_costHorizontal"));
 
-        gridLayout->addWidget(spinBox, 1, 0, 1, 1);
+        gridLayout->addWidget(sb_costHorizontal, 8, 0, 1, 1);
 
-        label_3 = new QLabel(gridLayoutWidget);
-        label_3->setObjectName(QStringLiteral("label_3"));
+        sb_lines = new QSpinBox(gridLayoutWidget);
+        sb_lines->setObjectName(QStringLiteral("sb_lines"));
 
-        gridLayout->addWidget(label_3, 4, 0, 1, 1);
+        gridLayout->addWidget(sb_lines, 1, 0, 1, 1);
 
         pb_SaveLabyrinth = new QPushButton(gridLayoutWidget);
         pb_SaveLabyrinth->setObjectName(QStringLiteral("pb_SaveLabyrinth"));
 
-        gridLayout->addWidget(pb_SaveLabyrinth, 10, 0, 1, 1);
-
-        spinBox_3 = new QSpinBox(gridLayoutWidget);
-        spinBox_3->setObjectName(QStringLiteral("spinBox_3"));
-
-        gridLayout->addWidget(spinBox_3, 5, 0, 1, 1);
+        gridLayout->addWidget(pb_SaveLabyrinth, 13, 0, 1, 1);
 
         verticalSpacer = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
 
-        gridLayout->addItem(verticalSpacer, 8, 0, 1, 1);
+        gridLayout->addItem(verticalSpacer, 11, 0, 1, 1);
 
-        spinBox_2 = new QSpinBox(gridLayoutWidget);
-        spinBox_2->setObjectName(QStringLiteral("spinBox_2"));
+        sb_columns = new QSpinBox(gridLayoutWidget);
+        sb_columns->setObjectName(QStringLiteral("sb_columns"));
 
-        gridLayout->addWidget(spinBox_2, 3, 0, 1, 1);
+        gridLayout->addWidget(sb_columns, 3, 0, 1, 1);
 
         pb_ImportLabyrinth = new QPushButton(gridLayoutWidget);
         pb_ImportLabyrinth->setObjectName(QStringLiteral("pb_ImportLabyrinth"));
 
-        gridLayout->addWidget(pb_ImportLabyrinth, 9, 0, 1, 1);
+        gridLayout->addWidget(pb_ImportLabyrinth, 12, 0, 1, 1);
 
-        pushButton = new QPushButton(gridLayoutWidget);
-        pushButton->setObjectName(QStringLiteral("pushButton"));
+        pb_start = new QPushButton(gridLayoutWidget);
+        pb_start->setObjectName(QStringLiteral("pb_start"));
 
-        gridLayout->addWidget(pushButton, 12, 0, 1, 1);
+        gridLayout->addWidget(pb_start, 15, 0, 1, 1);
 
-        label_2 = new QLabel(gridLayoutWidget);
-        label_2->setObjectName(QStringLiteral("label_2"));
+        lb_columns = new QLabel(gridLayoutWidget);
+        lb_columns->setObjectName(QStringLiteral("lb_columns"));
 
-        gridLayout->addWidget(label_2, 2, 0, 1, 1);
+        gridLayout->addWidget(lb_columns, 2, 0, 1, 1);
 
-        label = new QLabel(gridLayoutWidget);
-        label->setObjectName(QStringLiteral("label"));
+        lb_lines = new QLabel(gridLayoutWidget);
+        lb_lines->setObjectName(QStringLiteral("lb_lines"));
 
-        gridLayout->addWidget(label, 0, 0, 1, 1);
+        gridLayout->addWidget(lb_lines, 0, 0, 1, 1);
 
-        label_4 = new QLabel(gridLayoutWidget);
-        label_4->setObjectName(QStringLiteral("label_4"));
+        lb_costHorizontal = new QLabel(gridLayoutWidget);
+        lb_costHorizontal->setObjectName(QStringLiteral("lb_costHorizontal"));
 
-        gridLayout->addWidget(label_4, 6, 0, 1, 1);
+        gridLayout->addWidget(lb_costHorizontal, 6, 0, 1, 1);
 
         verticalSpacer_3 = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
 
-        gridLayout->addItem(verticalSpacer_3, 11, 0, 1, 1);
+        gridLayout->addItem(verticalSpacer_3, 14, 0, 1, 1);
 
-        widget = new QWidget(centralWidget);
-        widget->setObjectName(QStringLiteral("widget"));
-        widget->setGeometry(QRect(360, 30, 421, 201));
+        sb_costVertical = new QSpinBox(gridLayoutWidget);
+        sb_costVertical->setObjectName(QStringLiteral("sb_costVertical"));
+
+        gridLayout->addWidget(sb_costVertical, 10, 0, 1, 1);
+
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
         menuBar->setGeometry(QRect(0, 0, 772, 22));
         menuAbout = new QMenu(menuBar);
         menuAbout->setObjectName(QStringLiteral("menuAbout"));
-        menuConfigura_o = new QMenu(menuBar);
-        menuConfigura_o->setObjectName(QStringLiteral("menuConfigura_o"));
+        menuConfig = new QMenu(menuBar);
+        menuConfig->setObjectName(QStringLiteral("menuConfig"));
         MainWindow->setMenuBar(menuBar);
         mainToolBar = new QToolBar(MainWindow);
         mainToolBar->setObjectName(QStringLiteral("mainToolBar"));
@@ -168,12 +164,12 @@ public:
         statusBar->setObjectName(QStringLiteral("statusBar"));
         MainWindow->setStatusBar(statusBar);
 
-        menuBar->addAction(menuConfigura_o->menuAction());
+        menuBar->addAction(menuConfig->menuAction());
         menuBar->addAction(menuAbout->menuAction());
         menuAbout->addAction(actionHelp);
         menuAbout->addAction(actionLicense);
-        menuConfigura_o->addAction(actionImportLabyrinth);
-        menuConfigura_o->addAction(actionSaveLabyrinth);
+        menuConfig->addAction(actionImportLabyrinth);
+        menuConfig->addAction(actionSaveLabyrinth);
 
         retranslateUi(MainWindow);
 
@@ -187,16 +183,16 @@ public:
         actionHelp->setText(QApplication::translate("MainWindow", "Help", Q_NULLPTR));
         actionImportLabyrinth->setText(QApplication::translate("MainWindow", "Importar labirinto", Q_NULLPTR));
         actionSaveLabyrinth->setText(QApplication::translate("MainWindow", "Salvar labirinto", Q_NULLPTR));
-        groupBox->setTitle(QApplication::translate("MainWindow", "Configura\303\247\303\243o do labirinto", Q_NULLPTR));
-        label_3->setText(QApplication::translate("MainWindow", "Custo vertical", Q_NULLPTR));
+        gb_labyrinthConfig->setTitle(QApplication::translate("MainWindow", "Configura\303\247\303\243o do labirinto", Q_NULLPTR));
+        lb_costVertical->setText(QApplication::translate("MainWindow", "Custo vertical", Q_NULLPTR));
         pb_SaveLabyrinth->setText(QApplication::translate("MainWindow", "Exportar labirinto", Q_NULLPTR));
         pb_ImportLabyrinth->setText(QApplication::translate("MainWindow", "Importar labirinto", Q_NULLPTR));
-        pushButton->setText(QApplication::translate("MainWindow", "Start", Q_NULLPTR));
-        label_2->setText(QApplication::translate("MainWindow", "Colunas", Q_NULLPTR));
-        label->setText(QApplication::translate("MainWindow", "Linhas", Q_NULLPTR));
-        label_4->setText(QApplication::translate("MainWindow", "Custo horizontal", Q_NULLPTR));
+        pb_start->setText(QApplication::translate("MainWindow", "Start", Q_NULLPTR));
+        lb_columns->setText(QApplication::translate("MainWindow", "Colunas", Q_NULLPTR));
+        lb_lines->setText(QApplication::translate("MainWindow", "Linhas", Q_NULLPTR));
+        lb_costHorizontal->setText(QApplication::translate("MainWindow", "Custo horizontal", Q_NULLPTR));
         menuAbout->setTitle(QApplication::translate("MainWindow", "Sobre", Q_NULLPTR));
-        menuConfigura_o->setTitle(QApplication::translate("MainWindow", "Labirinto", Q_NULLPTR));
+        menuConfig->setTitle(QApplication::translate("MainWindow", "Labirinto", Q_NULLPTR));
     } // retranslateUi
 
 };

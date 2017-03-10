@@ -8,6 +8,8 @@
 #include <QDebug>
 
 #define DEBUG
+#define DEBUG_IMPORT_LABYRINTH
+#define DEBUG_READ_LABYRINTH
 
 namespace Ui {
 class MainWindow;
@@ -22,10 +24,11 @@ public:
     ~MainWindow();
 
 private slots:
-    void UI_license();
+    bool UI_ReadLabyrinthFile(QString);
     void UI_ImportLabyrinth();
-    void UI_SaveLabyrinth();
-    bool UI_ReadLabyrinthFile(QString importLabyrinthFile);
+    bool UI_SaveLabyrinth();
+    void UI_license();
+    void UI_help();
 
 private:
     Ui::MainWindow *ui;
@@ -36,8 +39,9 @@ private:
     QString importLabyrinthFile;
     QString saveLabyrinthFile;
 
-    // labyrinth confi
+    // labyrinth configuration
     int lines, columns;
+    int costHorizontal, costVertical;
 
 
 };
