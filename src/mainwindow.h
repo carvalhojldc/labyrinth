@@ -24,14 +24,19 @@ public:
     ~MainWindow();
 
 private slots:
+    void UI_setConfig();
     bool UI_ReadLabyrinthFile(QString);
-    void UI_ImportLabyrinth();
+    bool UI_ImportLabyrinth();
+    bool UI_WriteLabyrinthFile(QString);
     bool UI_SaveLabyrinth();
     void UI_license();
     void UI_help();
 
 private:
     Ui::MainWindow *ui;
+
+    void allocateLabyrinth();
+    void deleteLabyrinth();
 
     // for import/save labyrinth file
     QString userName;
@@ -40,9 +45,11 @@ private:
     QString saveLabyrinthFile;
 
     // labyrinth configuration
-    int lines, columns;
-    int costHorizontal, costVertical;
+    int lines, columns, \
+        costHorizontal, costVertical;
+    int **labyrinth;
 
+    QString programTitle = "CJL Labyrinth - A*";
 
 };
 

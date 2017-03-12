@@ -9,12 +9,17 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // var
     this->lines = 5;
-    this->columns = 9;
+    this->columns = 5;
     this->costHorizontal = 1;
     this->costVertical = 2;
+    this->labyrinth = nullptr;
+    allocateLabyrinth();
 
     // for import/save labyrinth file
-    this->userName = getenv("USER");
+
+    this->userName = qgetenv("USER");
+    if (this->userName.isEmpty())
+        this->userName = qgetenv("USERNAME");
     this->userDir = "/home/" + this->userName;
 
     // end var
@@ -35,21 +40,28 @@ MainWindow::MainWindow(QWidget *parent) :
     // --------------
 
     // UI
-    ui->sb_lines->setValue( this->lines );
-    ui->sb_columns->setValue( this->columns );
-    ui->sb_costHorizontal->setValue( this->costHorizontal );
-    ui->sb_costVertical->setValue( this->costVertical );
+    UI_setConfig();
 
     // end UI
     // --------------
 }
 
+void MainWindow::UI_setConfig()
+{
+    ui->sb_lines->setValue( this->lines );
+    ui->sb_columns->setValue( this->columns );
+    ui->sb_costHorizontal->setValue( this->costHorizontal );
+    ui->sb_costVertical->setValue( this->costVertical );
+}
+
 MainWindow::~MainWindow()
 {
     delete ui;
+
+    deleteLabyrinth();
 }
 
-void MainWindow::UI_ImportLabyrinth()
+bool MainWindow::UI_ImportLabyrinth()
 {
     importLabyrinthFile = QFileDialog::getOpenFileName(
             this,
@@ -57,89 +69,19 @@ void MainWindow::UI_ImportLabyrinth()
             userDir,
             "Text File (*.txt)");
 
-#ifdef DEBUG_IMPORT_LABYRINTH
-    qDebug() << "importLabyrinthFile : " << importLabyrinthFile;
-#endif
+    if( importLabyrinthFile.isEmpty() == true ) return false;
 
-    UI_ReadLabyrinthFile(importLabyrinthFile);
-}
-
-void error_ReadLabyrinthFile(QString importLabyrinthFile)
-{
-    QMessageBox::critical(
-        0,
-        "Erro na leitura",
-        "Configuração inválida no arquivo \n" + importLabyrinthFile);
-}
-
-
-bool validation_ReadLabyrinthFile(QFile& labyrinthFile)
-{
-    QString line;
-    QStringList listLine;
-
-    QTextStream in(&labyrinthFile);
-
-    // validation_file
-    line = in.readLine();
-    listLine = line.split(" ");
-
-    if( listLine.size() != 4 )
+    if( UI_ReadLabyrinthFile(importLabyrinthFile) == false )
     {
-#ifdef DEBUG_READ_LABYRINTH
-        qDebug() << "error:labyrinth:validation_config";
-#endif
+        QMessageBox::critical(
+            0,
+            "Erro na leitura",
+            "Configuração inválida no arquivo \n" + importLabyrinthFile);
         return false;
     }
-    else
-    {
-        int lines, columns;
-        int countLines;
-
-        lines = listLine.at(0).toInt();
-        columns = listLine.at(1).toInt();
-
-        for(countLines=0; ! in.atEnd(); countLines++)
-        {
-            line = in.readLine();
-            listLine = line.split(" ");
-
-            // validation_columns_size
-            if( listLine.size() != columns )
-            {
-#ifdef DEBUG_READ_LABYRINTH
-                qDebug() << "error:labyrinth:validation_columns_size";
-#endif
-                return false;
-            }
-
-            // validation_elements
-            for(int c=0; c<listLine.size(); c++)
-            {
-                if( listLine.at(c).toInt() < 0 || listLine.at(c).toInt() > 3 ) {
-#ifdef DEBUG_READ_LABYRINTH
-                    qDebug() << "error:labyrinth:validation_elements";
-#endif
-                    return false;
-                }
-            }
-        }
-
-        // validation_lines_size
-        if( countLines != lines ) {
-#ifdef DEBUG_READ_LABYRINTH
-            qDebug() << "error:labyrinth:validation_lines_size";
-#endif
-            return false;
-        }
-    }
-    // end validation_faile
-
-    in.seek(0);
 
     return true;
 }
-
 
 bool MainWindow::UI_ReadLabyrinthFile(QString importLabyrinthFile)
 {
@@ -154,11 +96,7 @@ bool MainWindow::UI_ReadLabyrinthFile(QString importLabyrinthFile)
             0,
             "Error: opening labyrinth",
             labyrinthFile.errorString());
-        return false;
-    }
 
-    if( ! validation_ReadLabyrinthFile(labyrinthFile) ) {
-        error_ReadLabyrinthFile(importLabyrinthFile);
         return false;
     }
 
@@ -167,43 +105,83 @@ bool MainWindow::UI_ReadLabyrinthFile(QString importLabyrinthFile)
     line = in.readLine();
     listLine = line.split(" ");
 
-    this->lines = listLine.at(0).toInt();
-    this->columns = listLine.at(1).toInt();
-    this->costHorizontal = listLine.at(2).toInt();
-    this->costVertical = listLine.at(3).toInt();
+    if( listLine.size() != 4 )
+    {
+        qDebug() << "error:labyrinth:validation_config";
+        return false;
+    }
+    else
+    {
+        int countLines;
+        int positionValue;
+        int numberLines    = listLine.at(0).toInt();
+        int numberColumns  = listLine.at(1).toInt();
+        int costHorizontal = listLine.at(2).toInt();
+        int costVertical   = listLine.at(3).toInt();
 
-    for(int l=0; l < this->lines; l++) {
-        line = in.readLine();
-        listLine = line.split(" ");
+        int labyrinth[numberLines][numberColumns];
 
-        for(int c = 0; c < this->columns; c++) {
-            //data[l][c] = listLine.at(c).toInt();
+        for(countLines=0; ! in.atEnd(); countLines++)
+        {
+            if( numberLines < countLines )
+            {
+                qDebug() << "error:labyrinth:validation_lines_size";
+                return false;
+            }
 
-            /*
-                TODO
+            line = in.readLine();
+            listLine = line.split(" ");
 
-                salvar matrix de pontos
+            if( listLine.size() != numberColumns )
+            {
+                qDebug() << "error:labyrinth:validation_columns_size";
+                return false;
+            }
 
-            */
+            for(int c=0; c<listLine.size(); c++)
+            {
+                positionValue = listLine.at(c).toInt();
+                if( positionValue < 0 || positionValue > 3 )
+                {
+                    qDebug() << "error:labyrinth:validation_elements";
+                    return false;
+                }
+                labyrinth[countLines][c] = positionValue;
+            }
         }
+
+        if( countLines != numberLines )
+        {
+            qDebug() << "error:labyrinth:validation_lines_size";
+            return false;
+        }
+        // end all_validataion
+        // ---------------------------
+
+        deleteLabyrinth();
+
+        this->lines = numberLines;
+        this->columns = numberColumns;
+        this->costHorizontal = costHorizontal;
+        this->costVertical = costVertical;
+
+        allocateLabyrinth();
+
+        for(int l=0; l < this->lines; l++) {
+            for(int c=0; c < this->columns; c++) {
+                this->labyrinth[l][c] = labyrinth[l][c];
+            }
+        }
+
+        UI_setConfig();
     }
 
     labyrinthFile.close();
 
     return true;
 }
-
-bool MainWindow::UI_SaveLabyrinth()
+bool MainWindow::UI_WriteLabyrinthFile(QString saveLabyrinthFile)
 {
-    saveLabyrinthFile = QFileDialog::getSaveFileName(
-            this,
-            tr("Save Labyrinth"),
-            userDir);
-
-#ifdef DEBUG
-    qDebug() << "saveLabyrinthFile = " << saveLabyrinthFile;
-#endif
-
     QFile labyrinthFile(saveLabyrinthFile);
 
     if( ! labyrinthFile.open(QIODevice::WriteOnly) )
@@ -222,11 +200,14 @@ bool MainWindow::UI_SaveLabyrinth()
         << this->costHorizontal << ' '
         << this->costVertical << endl;
 
-    /*
-     *  TODO
-     *
-     *  Salvar matrix de pontos
-    */
+    for(int l = 0; l<this->lines; l++)
+    {
+        for(int c = 0; c<this->columns-1; c++)
+        {
+            out << this->labyrinth[l][c] << ' ';
+        }
+        out << endl;
+    }
 
     labyrinthFile.close();
 
@@ -238,19 +219,44 @@ bool MainWindow::UI_SaveLabyrinth()
     return true;
 }
 
+bool MainWindow::UI_SaveLabyrinth()
+{
+    saveLabyrinthFile = QFileDialog::getSaveFileName(
+            this,
+            tr("Save Labyrinth"),
+            userDir,
+            "Text File (*.txt)");
+
+    if (! saveLabyrinthFile.endsWith(".txt", Qt::CaseInsensitive) )
+    {
+        saveLabyrinthFile += ".txt";
+    }
+
+#ifdef DEBUG
+    qDebug() << "saveLabyrinthFile = " << saveLabyrinthFile;
+#endif
+
+    if(saveLabyrinthFile.isEmpty()) return false;
+
+    UI_WriteLabyrinthFile(saveLabyrinthFile);
+
+    return true;
+}
+
 void MainWindow::UI_license()
 {
-    QString licenseText = "\
+    QString licenseText = programTitle + "\
+\n\n\
 Copyright (C) 2017 - João Leite de Carvalho (carvalhojldc@gmail.com)\n\n\
-This program is free software: you can redistribute it and/or modify\
-it under the terms of the GNU General Public License as published by\
-the Free Software Foundation, either version 3 of the License, or\
+This program is free software: you can redistribute it and/or modify \
+it under the terms of the GNU General Public License as published by \
+the Free Software Foundation, either version 3 of the License, or \
 (at your option) any later version.\n\n\
-This program is distributed in the hope that it will be useful,\
-but WITHOUT ANY WARRANTY; without even the implied warranty of\
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\
+This program is distributed in the hope that it will be useful, \
+but WITHOUT ANY WARRANTY; without even the implied warranty of \
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the \
 GNU General Public License for more details.\n\n\
-You should have received a copy of the GNU General Public License\
+You should have received a copy of the GNU General Public License \
 along with this program. If not, see \n<http://www.gnu.org/licenses/>.";
 
     QMessageBox *license = new QMessageBox(this);
@@ -263,7 +269,8 @@ along with this program. If not, see \n<http://www.gnu.org/licenses/>.";
 
 void MainWindow::UI_help()
 {
-    QString helpText = "\
+    QString helpText = programTitle + "\
+\n\n\
 Este programa tem como objetivo aplicar o\n\
 algoritmo A* na resolução de rotas.\n\n\
 Defina um ponto de partida, um ponto final\n\
@@ -283,4 +290,31 @@ João Leite de Carvalho - carvalhojldc@gmail.com";
     help->setWindowTitle("Help");
 
     help->exec();
+}
+
+void MainWindow::allocateLabyrinth()
+{
+    if(this->labyrinth != NULL)
+    {
+        deleteLabyrinth();
+    }
+
+    this->labyrinth = new int*[this->lines];
+
+    for(int l=0; l<this->lines; l++)
+    {
+        this->labyrinth[l] = new int[this->columns];
+    }
+}
+
+void MainWindow::deleteLabyrinth()
+{
+    for(int l=0; l<this->lines; l++)
+    {
+        delete []this->labyrinth[l];
+    }
+
+    delete []this->labyrinth;
+
+    this->labyrinth = nullptr;
 }
