@@ -29,6 +29,7 @@ struct Position
 {
     int line;
     int column;
+    bool active;
 };
 
 namespace Ui {

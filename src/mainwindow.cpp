@@ -30,8 +30,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
     this->startPosition.line = 0;
     this->startPosition.column = 0;
+    this->startPosition.active = false;
     this->endPosition.line = this->startPosition.line+1;
     this->endPosition.column = this->startPosition.column+1;
+    this->endPosition.active = false;
 
     // end var
     // --------------
@@ -330,19 +332,21 @@ void MainWindow::UI_SaveLabyrinth()
 
 void MainWindow::UI_changeType(int line, int column)
 {
-    qDebug() << line << column;
-
     if(ui->rb_start->isChecked() && (this->startPosition.line != line \
             || this->startPosition.column != column) )
     {
         ui->board->item(line,column)->data(0) = CELL_START;
         ui->board->item(line,column)->setBackgroundColor(Qt::green);
 
-        ui->board->item(this->startPosition.line, this->startPosition.column)->\
-                setBackgroundColor(Qt::white);
+        if(this->startPosition.active)
+        {
+            ui->board->item(this->startPosition.line, this->startPosition.column)->\
+                    setBackgroundColor(Qt::white);
+        }
 
         this->startPosition.line = line;
         this->startPosition.column = column;
+        this->startPosition.active = true;
     }
     else if(ui->rb_end->isChecked() && (this->endPosition.line != line \
             || this->endPosition.column != column) )
