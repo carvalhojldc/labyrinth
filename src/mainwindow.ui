@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>789</width>
-    <height>653</height>
+    <width>885</width>
+    <height>753</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -21,9 +21,9 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>10</y>
-      <width>184</width>
-      <height>591</height>
+      <y>14</y>
+      <width>241</width>
+      <height>551</height>
      </rect>
     </property>
     <property name="title">
@@ -31,57 +31,68 @@
     </property>
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
-      <widget class="QPushButton" name="pb_ImportLabyrinth">
-       <property name="text">
-        <string>Importar labirinto</string>
-       </property>
-      </widget>
-     </item>
-     <item>
       <widget class="QGroupBox" name="groupBox_2">
        <property name="title">
-        <string>Dimensões e custos</string>
+        <string>Dimensão e custo</string>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_3">
         <item>
-         <widget class="QLabel" name="lb_lines">
-          <property name="text">
-           <string>Linhas</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QSpinBox" name="sb_lines"/>
-        </item>
-        <item>
-         <widget class="QLabel" name="lb_columns">
-          <property name="text">
-           <string>Colunas</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QSpinBox" name="sb_columns"/>
-        </item>
-        <item>
-         <widget class="QLabel" name="lb_costHorizontal">
-          <property name="text">
-           <string>Custo horizontal</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QSpinBox" name="sb_costHorizontal"/>
-        </item>
-        <item>
-         <widget class="QLabel" name="lb_costVertical">
-          <property name="text">
-           <string>Custo vertical</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QSpinBox" name="sb_costVertical"/>
+         <layout class="QFormLayout" name="formLayout">
+          <item row="2" column="0">
+           <widget class="QLabel" name="lb_costHorizontal">
+            <property name="text">
+             <string>Custo horizontal</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QLabel" name="lb_costVertical">
+            <property name="text">
+             <string>Custo vertical</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0">
+           <widget class="QLabel" name="lb_costDiagonal">
+            <property name="text">
+             <string>Custo diagonal</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QSpinBox" name="sb_columns"/>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="lb_columns">
+            <property name="text">
+             <string>Colunas</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QSpinBox" name="sb_lines"/>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="lb_lines">
+            <property name="text">
+             <string>Linhas</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="1">
+           <widget class="QDoubleSpinBox" name="sb_costDiagonal">
+            <property name="singleStep">
+             <double>0.500000000000000</double>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
+           <widget class="QDoubleSpinBox" name="sb_costVertical"/>
+          </item>
+          <item row="2" column="1">
+           <widget class="QDoubleSpinBox" name="sb_costHorizontal"/>
+          </item>
+         </layout>
         </item>
         <item>
          <widget class="QPushButton" name="pushButton">
@@ -91,22 +102,6 @@
          </widget>
         </item>
        </layout>
-       <zorder>sb_costVertical</zorder>
-       <zorder>lb_costVertical</zorder>
-       <zorder>sb_costHorizontal</zorder>
-       <zorder>lb_costHorizontal</zorder>
-       <zorder>sb_columns</zorder>
-       <zorder>lb_columns</zorder>
-       <zorder>sb_lines</zorder>
-       <zorder>lb_lines</zorder>
-       <zorder>pushButton</zorder>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="pb_drawing">
-       <property name="text">
-        <string>Modo desenho</string>
-       </property>
       </widget>
      </item>
      <item>
@@ -115,7 +110,7 @@
         <bool>true</bool>
        </property>
        <property name="title">
-        <string>Desenho</string>
+        <string>Desenho do labirinto</string>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
@@ -135,46 +130,33 @@
         <item>
          <widget class="QRadioButton" name="rb_wall">
           <property name="text">
-           <string>Barreira</string>
+           <string>Obstáculo</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QRadioButton" name="radioButton">
+         <widget class="QRadioButton" name="rb_clearCell">
           <property name="text">
-           <string>Limpar posição</string>
+           <string>Apagar posição</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="pushButton_2">
+         <widget class="QLabel" name="label_2">
           <property name="text">
-           <string>Lipar tudo</string>
+           <string>TextLabel</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pb_clearBoard">
+          <property name="text">
+           <string>Apagar desenho</string>
           </property>
          </widget>
         </item>
        </layout>
       </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="pb_SaveLabyrinth">
-       <property name="text">
-        <string>Exportar labirinto</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer name="verticalSpacer">
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>20</width>
-         <height>40</height>
-        </size>
-       </property>
-      </spacer>
      </item>
      <item>
       <widget class="QPushButton" name="pb_start">
@@ -191,7 +173,7 @@
    <widget class="QTableWidget" name="board">
     <property name="geometry">
      <rect>
-      <x>200</x>
+      <x>260</x>
       <y>30</y>
       <width>581</width>
       <height>581</height>
@@ -213,8 +195,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>789</width>
-     <height>20</height>
+     <width>885</width>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuAbout">

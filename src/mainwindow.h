@@ -5,6 +5,7 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QTableWidget>
+#include <QStandardPaths>
 
 #include <QDebug>
 
@@ -17,7 +18,15 @@
 #define CELL_START 2
 #define CELL_END   3
 
-struct Position {
+struct Colors
+{
+    const QString start = "green";
+    const QString end = "blue";
+    const QString wall = "black";
+};
+
+struct Position
+{
     int line;
     int column;
 };
@@ -36,22 +45,30 @@ public:
 
 private slots:
     void UI_setConfig();
-    bool UI_ReadLabyrinthFile(QString);
-    bool UI_ImportLabyrinth();
-    bool UI_WriteLabyrinthFile(QString);
-    bool UI_SaveLabyrinth();
+    void UI_setBoard();
+
     void UI_license();
     void UI_help();
 
-    void UI_Drawing();
+    // read_write
+    bool UI_ReadLabyrinthFile(QString);
+    void UI_ImportLabyrinth();
+
+    bool UI_WriteLabyrinthFile(QString);
+    void UI_SaveLabyrinth();
+    // end read_write
 
     void UI_changeType(int,int);
 
 private:
     Ui::MainWindow *ui;
 
+    QString programTitle = "CJL Labyrinth - A*";
+
     void allocateLabyrinth();
     void deleteLabyrinth();
+
+    float getCostDiagonal();
 
     // for import/save labyrinth file
     QString userName;
@@ -62,13 +79,12 @@ private:
     // labyrinth configuration
     int lines, columns, \
         costHorizontal, costVertical;
+    float costDiagonal;
     int **labyrinth;
 
     Position startPosition, endPosition;
 
-    bool drawingMode;
-
-    QString programTitle = "CJL Labyrinth - A*";
+    Colors colors;
 
 };
 

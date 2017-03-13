@@ -8,89 +8,53 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     // var
-    this->lines = 10;
-    this->columns = 10;
+
+    // for import/save labyrinth file
+    this->userName = qgetenv("USER");
+    if(this->userName.isEmpty())
+        this->userName = qgetenv("USERNAME");
+#ifdef linux
+    this->userDir = "/home/" + this->userName;
+#elif _WIN32 || _WIN64
+    this->userDir = "C:\Users\" + this->userName;
+#endif
+
+    this->lines          = 10;
+    this->columns        = 10;
     this->costHorizontal = 1;
-    this->costVertical = 2;
+    this->costVertical   = 2;
+    this->costDiagonal   = getCostDiagonal();
+
     this->labyrinth = nullptr;
     allocateLabyrinth();
 
     this->startPosition.line = 0;
     this->startPosition.column = 0;
-
     this->endPosition.line = this->startPosition.line+1;
     this->endPosition.column = this->startPosition.column+1;
-
-    drawingMode = false;
-
-    // for import/save labyrinth file
-
-    this->userName = qgetenv("USER");
-    if (this->userName.isEmpty())
-        this->userName = qgetenv("USERNAME");
-    this->userDir = "/home/" + this->userName;
 
     // end var
     // --------------
 
     // connect
 
-    connect(ui->actionLicense, SIGNAL(triggered(bool)), this, SLOT(UI_license()));
-    connect(ui->actionHelp, SIGNAL(triggered(bool)), this, SLOT(UI_help()));
-
-    // for import/save labyrinth file
+    // for menu
     connect(ui->actionImportLabyrinth, SIGNAL(triggered(bool)), this, SLOT(UI_ImportLabyrinth()));
-    connect(ui->actionSaveLabyrinth, SIGNAL(triggered(bool)), this, SLOT(UI_SaveLabyrinth()));
-    connect(ui->pb_ImportLabyrinth, SIGNAL(clicked(bool)), this, SLOT(UI_ImportLabyrinth()));
-    connect(ui->pb_SaveLabyrinth, SIGNAL(clicked(bool)), this, SLOT(UI_SaveLabyrinth()));
+    connect(ui->actionSaveLabyrinth,   SIGNAL(triggered(bool)), this, SLOT(UI_SaveLabyrinth()));
+    connect(ui->actionLicense,         SIGNAL(triggered(bool)), this, SLOT(UI_license()));
+    connect(ui->actionHelp,            SIGNAL(triggered(bool)), this, SLOT(UI_help()));
 
-    connect(ui->pb_drawing, SIGNAL(clicked(bool)), this, SLOT(UI_Drawing()));
+    connect(ui->board, SIGNAL(cellClicked(int,int)), this, SLOT(UI_changeType(int,int)));
 
-    connect(ui->board, SIGNAL(cellClicked(int,int)),this, SLOT(UI_changeType(int,int)));
     // end connect
     // --------------
 
     // UI
     UI_setConfig();
+    UI_setBoard();
 
     // end UI
     // --------------
-
-    ui->board->setRowCount(this->lines);
-    ui->board->setColumnCount(this->columns);
-    ui->board->verticalHeader()->setVisible(false);
-    ui->board->horizontalHeader()->setVisible(false);
-    ui->board->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-    ui->board->verticalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-
-    for(int l=0; l<this->lines; l++)
-    {
-        for(int c=0; c<this->columns; c++)
-        {
-            ui->board->setItem(l,c, new QTableWidgetItem(0));
-            ui->board->item(l,c)->setData(0,CELL_FREE);
-        }
-    }
-    ui->board->item(this->startPosition.line,this->startPosition.column)->data(0) = CELL_START;
-    ui->board->item(this->startPosition.line,this->startPosition.column)->setBackgroundColor(Qt::green);
-
-    ui->board->item(this->endPosition.line,this->endPosition.column)->data(0) = CELL_END;
-    ui->board->item(this->endPosition.line,this->endPosition.column)->setBackgroundColor(Qt::blue);
-   // ui->board->horizontalHeader()->setStretchLastSection( true );
-    //ui->board->verticalHeader()->setStretchLastSection( true );
-
-    // edit
-    ui->pb_ImportLabyrinth->setVisible(false);
-    ui->pb_SaveLabyrinth->setVisible(false);
-
-}
-
-void MainWindow::UI_setConfig()
-{
-    ui->sb_lines->setValue( this->lines );
-    ui->sb_columns->setValue( this->columns );
-    ui->sb_costHorizontal->setValue( this->costHorizontal );
-    ui->sb_costVertical->setValue( this->costVertical );
 }
 
 MainWindow::~MainWindow()
@@ -100,26 +64,94 @@ MainWindow::~MainWindow()
     deleteLabyrinth();
 }
 
-bool MainWindow::UI_ImportLabyrinth()
+void MainWindow::UI_setConfig()
 {
-    importLabyrinthFile = QFileDialog::getOpenFileName(
-            this,
-            tr("Import Labyrinth"),
-            userDir,
-            "Text File (*.txt)");
+    ui->sb_lines->setValue( this->lines );
+    ui->sb_columns->setValue( this->columns );
+    ui->sb_costHorizontal->setValue( this->costHorizontal );
+    ui->sb_costVertical->setValue( this->costVertical );
+    ui->sb_costDiagonal->setValue( this->costDiagonal );
 
-    if( importLabyrinthFile.isEmpty() == true ) return false;
+    ui->rb_wall->setIcon(QIcon("../icons/colors/" + colors.wall + ".png"));
+    ui->rb_start->setIcon(QIcon("../icons/colors/" + colors.start + ".png"));
+    ui->rb_end->setIcon(QIcon("../icons/colors/" + colors.end + ".png"));
+}
 
-    if( UI_ReadLabyrinthFile(importLabyrinthFile) == false )
+void MainWindow::UI_setBoard()
+{
+    ui->board->setRowCount(this->lines);
+    ui->board->setColumnCount(this->columns);
+    ui->board->verticalHeader()->setVisible(false);
+    ui->board->horizontalHeader()->setVisible(false);
+    ui->board->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    ui->board->verticalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+
+    // ui->board->horizontalHeader()->setStretchLastSection( true );
+     //ui->board->verticalHeader()->setStretchLastSection( true );
+
+    for(int l=0; l<this->lines; l++)
     {
-        QMessageBox::critical(
-            0,
-            "Erro na leitura",
-            "Configuração inválida no arquivo \n" + importLabyrinthFile);
-        return false;
+        for(int c=0; c<this->columns; c++)
+        {
+            ui->board->setItem(l, c, new QTableWidgetItem(0));
+            ui->board->item(l, c)->setData(0,CELL_FREE);
+        }
     }
 
-    return true;
+    //ui->board->item(this->startPosition.line,this->startPosition.column)->data(0) = CELL_START;
+    //ui->board->item(this->startPosition.line,this->startPosition.column)->setBackgroundColor(Qt::green);
+
+    //ui->board->item(this->endPosition.line,this->endPosition.column)->data(0) = CELL_END;
+    //ui->board->item(this->endPosition.line,this->endPosition.column)->setBackgroundColor(Qt::blue);
+}
+
+void MainWindow::UI_license()
+{
+    QString licenseText = programTitle + "\
+\n\n\
+Copyright (C) 2017 - João Leite de Carvalho (carvalhojldc@gmail.com)\n\n\
+This program is free software: you can redistribute it and/or modify \
+it under the terms of the GNU General Public License as published by \
+the Free Software Foundation, either version 3 of the License, or \
+(at your option) any later version.\n\n\
+This program is distributed in the hope that it will be useful, \
+but WITHOUT ANY WARRANTY; without even the implied warranty of \
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the \
+GNU General Public License for more details.\n\n\
+You should have received a copy of the GNU General Public License \
+along with this program. If not, see \n<http://www.gnu.org/licenses/>.";
+
+    QMessageBox *license = new QMessageBox(this);
+
+    license->setText(licenseText);
+    license->setWindowTitle("License");
+
+    license->exec();
+}
+
+void MainWindow::UI_help()
+{
+    QString helpText = programTitle + "\
+\n\n\
+Este programa tem como objetivo aplicar o\n\
+algoritmo A* na resolução de rotas.\n\n\
+Defina um ponto de partida, um ponto final\n\
+e crie o labirinto a ser resolvido.\n\n\
+Como usar:\n\
+* Um clique para definir o ponto de partida;\n\
+* Dois cliques para definir uma barreira;\n\
+* Três cliques para definir o ponto final;\n\
+* Quatro cliques para deixar a posição em branco.\n\n\
+Clique em \"Start\" para resolver o labirinto.\n\n\
+https://carvalhojldc.github.com/labyrinth\n\n\
+João Leite de Carvalho - carvalhojldc@gmail.com";
+
+    QMessageBox *help = new QMessageBox(this);
+
+    help->setText(helpText);
+    help->setWindowTitle("Help");
+
+    help->exec();
 }
 
 bool MainWindow::UI_ReadLabyrinthFile(QString importLabyrinthFile)
@@ -219,6 +251,26 @@ bool MainWindow::UI_ReadLabyrinthFile(QString importLabyrinthFile)
 
     return true;
 }
+
+void MainWindow::UI_ImportLabyrinth()
+{
+    importLabyrinthFile = QFileDialog::getOpenFileName(
+            this,
+            tr("Import Labyrinth"),
+            userDir,
+            "Text File (*.txt)");
+
+    if( importLabyrinthFile.isEmpty() == true ) return;
+
+    if( UI_ReadLabyrinthFile(importLabyrinthFile) == false )
+    {
+        QMessageBox::critical(
+            0,
+            "Erro na leitura",
+            "Configuração inválida no arquivo \n" + importLabyrinthFile);
+    }
+}
+
 bool MainWindow::UI_WriteLabyrinthFile(QString saveLabyrinthFile)
 {
     QFile labyrinthFile(saveLabyrinthFile);
@@ -258,7 +310,7 @@ bool MainWindow::UI_WriteLabyrinthFile(QString saveLabyrinthFile)
     return true;
 }
 
-bool MainWindow::UI_SaveLabyrinth()
+void MainWindow::UI_SaveLabyrinth()
 {
     saveLabyrinthFile = QFileDialog::getSaveFileName(
             this,
@@ -266,11 +318,7 @@ bool MainWindow::UI_SaveLabyrinth()
             userDir,
             "Text File (*.txt)");
 
-#ifdef DEBUG
-    qDebug() << "saveLabyrinthFile = " << saveLabyrinthFile;
-#endif
-
-    if(saveLabyrinthFile.isEmpty()) return false;
+    if(saveLabyrinthFile.isEmpty()) return;
 
     if (! saveLabyrinthFile.endsWith(".txt", Qt::CaseInsensitive) )
     {
@@ -278,104 +326,6 @@ bool MainWindow::UI_SaveLabyrinth()
     }
 
     UI_WriteLabyrinthFile(saveLabyrinthFile);
-
-    return true;
-}
-
-void MainWindow::UI_license()
-{
-    QString licenseText = programTitle + "\
-\n\n\
-Copyright (C) 2017 - João Leite de Carvalho (carvalhojldc@gmail.com)\n\n\
-This program is free software: you can redistribute it and/or modify \
-it under the terms of the GNU General Public License as published by \
-the Free Software Foundation, either version 3 of the License, or \
-(at your option) any later version.\n\n\
-This program is distributed in the hope that it will be useful, \
-but WITHOUT ANY WARRANTY; without even the implied warranty of \
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the \
-GNU General Public License for more details.\n\n\
-You should have received a copy of the GNU General Public License \
-along with this program. If not, see \n<http://www.gnu.org/licenses/>.";
-
-    QMessageBox *license = new QMessageBox(this);
-
-    license->setText(licenseText);
-    license->setWindowTitle("License");
-
-    license->exec();
-}
-
-void MainWindow::UI_help()
-{
-    QString helpText = programTitle + "\
-\n\n\
-Este programa tem como objetivo aplicar o\n\
-algoritmo A* na resolução de rotas.\n\n\
-Defina um ponto de partida, um ponto final\n\
-e crie o labirinto a ser resolvido.\n\n\
-Como usar:\n\
-* Um clique para definir o ponto de partida;\n\
-* Dois cliques para definir uma barreira;\n\
-* Três cliques para definir o ponto final;\n\
-* Quatro cliques para deixar a posição em branco.\n\n\
-Clique em \"Start\" para resolver o labirinto.\n\n\
-https://carvalhojldc.github.com/labyrinth\n\n\
-João Leite de Carvalho - carvalhojldc@gmail.com";
-
-    QMessageBox *help = new QMessageBox(this);
-
-    help->setText(helpText);
-    help->setWindowTitle("Help");
-
-    help->exec();
-}
-
-void MainWindow::allocateLabyrinth()
-{
-    if(this->labyrinth != NULL)
-    {
-        deleteLabyrinth();
-    }
-
-    this->labyrinth = new int*[this->lines];
-
-    for(int l=0; l<this->lines; l++)
-    {
-        this->labyrinth[l] = new int[this->columns];
-    }
-}
-
-void MainWindow::deleteLabyrinth()
-{
-    for(int l=0; l<this->lines; l++)
-    {
-        delete []this->labyrinth[l];
-    }
-
-    delete []this->labyrinth;
-
-    this->labyrinth = nullptr;
-}
-
-void MainWindow::UI_Drawing()
-{
-    if(this->drawingMode == false )
-    {
-        this->drawingMode = true;
-        //ui->gb_drawing->setDisabled(false);
-        ui->gb_drawing->setVisible(true);
-
-        ui->pb_drawing->setText("Finalizar desenho");
-    }
-    else
-    {
-        this->drawingMode = false;
-        //ui->gb_drawing->setDisabled(true);
-        ui->gb_drawing->setVisible(false);
-
-        ui->pb_drawing->setText("Inicicar desenho");
-    }
 }
 
 void MainWindow::UI_changeType(int line, int column)
@@ -411,4 +361,43 @@ void MainWindow::UI_changeType(int line, int column)
         ui->board->item(line,column)->data(0) = CELL_WALL;
         ui->board->item(line,column)->setBackgroundColor(Qt::black);
     }
+}
+
+void MainWindow::allocateLabyrinth()
+{
+    if(this->labyrinth != NULL)
+    {
+        deleteLabyrinth();
+    }
+
+    this->labyrinth = new int*[this->lines];
+
+    for(int l=0; l<this->lines; l++)
+    {
+        this->labyrinth[l] = new int[this->columns];
+    }
+}
+
+void MainWindow::deleteLabyrinth()
+{
+    for(int l=0; l<this->lines; l++)
+    {
+        delete []this->labyrinth[l];
+    }
+
+    delete []this->labyrinth;
+
+    this->labyrinth = nullptr;
+}
+
+float MainWindow::getCostDiagonal()
+{
+    float cost;
+    int d = 10;
+
+    cost = sqrt( pow(this->costHorizontal,2) \
+                 + pow(this->costVertical,2) );
+
+    cost = int(cost*d);
+    return cost/d;
 }
