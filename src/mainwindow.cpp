@@ -266,16 +266,16 @@ bool MainWindow::UI_SaveLabyrinth()
             userDir,
             "Text File (*.txt)");
 
-    if (! saveLabyrinthFile.endsWith(".txt", Qt::CaseInsensitive) )
-    {
-        saveLabyrinthFile += ".txt";
-    }
-
 #ifdef DEBUG
     qDebug() << "saveLabyrinthFile = " << saveLabyrinthFile;
 #endif
 
     if(saveLabyrinthFile.isEmpty()) return false;
+
+    if (! saveLabyrinthFile.endsWith(".txt", Qt::CaseInsensitive) )
+    {
+        saveLabyrinthFile += ".txt";
+    }
 
     UI_WriteLabyrinthFile(saveLabyrinthFile);
 
