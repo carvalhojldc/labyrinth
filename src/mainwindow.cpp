@@ -5,7 +5,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
-    ui->setupUi(this);
+    ui->setupUi(this);    
 
     // var
 
@@ -16,14 +16,14 @@ MainWindow::MainWindow(QWidget *parent) :
 #ifdef linux
     this->userDir = "/home/" + this->userName;
 #elif _WIN32 || _WIN64
-    this->userDir = "C:\Users\" + this->userName;
+    this->userDir = "C:\\Users\\" + this->userName;
 #endif
 
     this->lines          = 10;
     this->columns        = 10;
-    this->costHorizontal = 1;
-    this->costVertical   = 2;
-    this->costDiagonal   = getCostDiagonal();
+    this->costHorizontal = 1.0;
+    this->costVertical   = 2.0;
+    this->costDiagonal   = getDiagonal(this->costHorizontal, this->costVertical);
 
     this->labyrinth = nullptr;
     allocateLabyrinth();
@@ -31,8 +31,8 @@ MainWindow::MainWindow(QWidget *parent) :
     this->startPosition.line = 0;
     this->startPosition.column = 0;
     this->startPosition.active = false;
-    this->endPosition.line = this->startPosition.line+1;
-    this->endPosition.column = this->startPosition.column+1;
+    this->endPosition.line = 1;
+    this->endPosition.column = 1;
     this->endPosition.active = false;
 
     // end var
@@ -46,9 +46,17 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionLicense,         SIGNAL(triggered(bool)), this, SLOT(UI_license()));
     connect(ui->actionHelp,            SIGNAL(triggered(bool)), this, SLOT(UI_help()));
 
-    connect(ui->pb_clearBoard, SIGNAL(clicked(bool)), this, SLOT(UI_cleanBoard()));
+    connect(ui->pb_clearBoard, SIGNAL(clicked(bool)), this, SLOT(UI_clearBoard()));
+    connect(ui->pb_newBoard,   SIGNAL(clicked(bool)), this, SLOT(UI_newBoard()));
 
     connect(ui->board, SIGNAL(cellClicked(int,int)), this, SLOT(UI_changeType(int,int)));
+
+    connect(ui->sb_costHorizontal, SIGNAL(valueChanged(double)), this, SLOT(UI_newCostDiagonal()));
+    connect(ui->sb_costVertical,   SIGNAL(valueChanged(double)), this, SLOT(UI_newCostDiagonal()));
+
+    connect(ui->sb_costDiagonal,   SIGNAL(valueChanged(double)), this, SLOT(UI_changeButtonUpdate()));
+    connect(ui->sb_columns,        SIGNAL(valueChanged(int)), this, SLOT(UI_changeButtonUpdate()));
+    connect(ui->sb_lines,          SIGNAL(valueChanged(int)), this, SLOT(UI_changeButtonUpdate()));
 
     // end connect
     // --------------
@@ -56,6 +64,7 @@ MainWindow::MainWindow(QWidget *parent) :
     // UI
     UI_setConfig();
     UI_setBoard();
+    UI_updateUI();
 
     // end UI
     // --------------
@@ -68,7 +77,13 @@ MainWindow::~MainWindow()
     deleteLabyrinth();
 }
 
-void MainWindow::UI_setConfig()
+void MainWindow::UI_changeButtonUpdate()
+{
+    ui->pb_newBoard->setDisabled(false);
+    ui->pb_newBoard->setStyleSheet("background-color: red");
+}
+
+void MainWindow::UI_updateUI()
 {
     ui->sb_lines->setValue( this->lines );
     ui->sb_columns->setValue( this->columns );
@@ -76,37 +91,125 @@ void MainWindow::UI_setConfig()
     ui->sb_costVertical->setValue( this->costVertical );
     ui->sb_costDiagonal->setValue( this->costDiagonal );
 
+    ui->pb_newBoard->setDisabled(true);
+    ui->pb_newBoard->setStyleSheet("background-color: none");
+}
+
+void MainWindow::UI_setConfig()
+{
+    ui->actionImportLabyrinth->setIcon(this->style()->standardIcon(QStyle::SP_FileIcon));
+    ui->actionSaveLabyrinth->setIcon(this->style()->standardIcon(QStyle::SP_DialogSaveButton));
+    ui->actionHelp->setIcon(this->style()->standardIcon(QStyle::SP_DialogHelpButton));
+    ui->actionLicense->setIcon(this->style()->standardIcon(QStyle::SP_ComputerIcon));
+
+    ui->pb_newBoard->setIcon(this->style()->standardIcon(QStyle::SP_BrowserReload));
+    ui->pb_clearBoard->setIcon(this->style()->standardIcon(QStyle::SP_TrashIcon));
+    ui->pb_start->setIcon(this->style()->standardIcon(QStyle::SP_DialogYesButton));
+
     ui->rb_wall->setIcon(QIcon("../icons/colors/" + colors.wall + ".png"));
     ui->rb_start->setIcon(QIcon("../icons/colors/" + colors.start + ".png"));
     ui->rb_end->setIcon(QIcon("../icons/colors/" + colors.end + ".png"));
+    ui->rb_clearCell->setIcon(QIcon("../icons/colors/" + colors.free + ".png"));
+
+
+    int max = 1000;
+    ui->sb_columns->setMaximum(max);
+    ui->sb_lines->setMaximum(max);
+    ui->sb_costDiagonal->setMaximum(max);
+    ui->sb_costHorizontal->setMaximum(max);
+    ui->sb_costDiagonal->setMaximum(max);
+}
+
+void MainWindow::UI_setCellValue(int line, int column, int value)
+{
+    ui->board->item(line,column)->data(0) = value;
+
+    if(value == CELL_START)
+    {
+        ui->board->item(line,column)->setBackgroundColor(this->colors.start);
+
+        if(this->startPosition.active) {
+            ui->board->item(this->startPosition.line, this->startPosition.column)\
+                    ->setBackgroundColor(this->colors.free);
+        }
+
+        disableEndCell(line, column);
+
+        this->startPosition.line = line;
+        this->startPosition.column = column;
+        this->startPosition.active = true;
+    }
+    else if(value == CELL_END)
+    {
+        ui->board->item(line,column)->setBackgroundColor(this->colors.end);
+
+        if(this->endPosition.active) {
+            ui->board->item(this->endPosition.line, this->endPosition.column)\
+                    ->setBackgroundColor(this->colors.free);
+        }
+        disableStartCell(line, column);
+
+        this->endPosition.line = line;
+        this->endPosition.column = column;
+        this->endPosition.active = true;
+    }
+    else if(value == CELL_FREE)
+    {
+        ui->board->item(line,column)->setBackgroundColor(this->colors.free);
+
+        disableStartCell(line, column);
+        disableEndCell(line, column);
+    }
+    else if(value == CELL_WALL)
+    {
+        ui->board->item(line,column)->setBackgroundColor(this->colors.wall);
+
+        disableStartCell(line, column);
+        disableEndCell(line, column);
+    }
+}
+
+void MainWindow::UI_clearBoard()
+{
+    for(int l=0; l<this->lines; l++) {
+        for(int c=0; c<this->columns; c++) {
+            UI_setCellValue(l,c,CELL_FREE);
+        }
+    }
+}
+
+void MainWindow::UI_createCellsBoard(int startLine, int endLine, \
+            int startColumn, int endColumn)
+{
+    for(int l=startLine; l<endLine; l++) {
+        for(int c=startColumn; c<endColumn; c++) {
+            ui->board->setItem(l, c, new QTableWidgetItem(0));
+            ui->board->item(l, c)->setData(0,CELL_FREE);
+        }
+    }
 }
 
 void MainWindow::UI_setBoard()
 {
     ui->board->setRowCount(this->lines);
     ui->board->setColumnCount(this->columns);
+
     ui->board->verticalHeader()->setVisible(false);
     ui->board->horizontalHeader()->setVisible(false);
+
+    ui->board->setEditTriggers(QAbstractItemView::NoEditTriggers);
+
     ui->board->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     ui->board->verticalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+
+    ui->board->setGridStyle(Qt::DashLine);
+    //ui->board->setShowGrid(false);
+    ui->board->setSelectionMode(QAbstractItemView::NoSelection);
 
     // ui->board->horizontalHeader()->setStretchLastSection( true );
      //ui->board->verticalHeader()->setStretchLastSection( true );
 
-    for(int l=0; l<this->lines; l++)
-    {
-        for(int c=0; c<this->columns; c++)
-        {
-            ui->board->setItem(l, c, new QTableWidgetItem(0));
-            ui->board->item(l, c)->setData(0,CELL_FREE);
-        }
-    }
-
-    //ui->board->item(this->startPosition.line,this->startPosition.column)->data(0) = CELL_START;
-    //ui->board->item(this->startPosition.line,this->startPosition.column)->setBackgroundColor(Qt::green);
-
-    //ui->board->item(this->endPosition.line,this->endPosition.column)->data(0) = CELL_END;
-    //ui->board->item(this->endPosition.line,this->endPosition.column)->setBackgroundColor(Qt::blue);
+    UI_createCellsBoard(0, this->lines, 0, this->columns);
 }
 
 void MainWindow::UI_license()
@@ -141,12 +244,6 @@ Este programa tem como objetivo aplicar o\n\
 algoritmo A* na resolução de rotas.\n\n\
 Defina um ponto de partida, um ponto final\n\
 e crie o labirinto a ser resolvido.\n\n\
-Como usar:\n\
-* Um clique para definir o ponto de partida;\n\
-* Dois cliques para definir uma barreira;\n\
-* Três cliques para definir o ponto final;\n\
-* Quatro cliques para deixar a posição em branco.\n\n\
-Clique em \"Start\" para resolver o labirinto.\n\n\
 https://carvalhojldc.github.com/labyrinth\n\n\
 João Leite de Carvalho - carvalhojldc@gmail.com";
 
@@ -165,8 +262,7 @@ bool MainWindow::UI_ReadLabyrinthFile(QString importLabyrinthFile)
 
     QFile labyrinthFile(importLabyrinthFile);
 
-    if( ! labyrinthFile.open(QIODevice::ReadOnly) )
-    {
+    if( ! labyrinthFile.open(QIODevice::ReadOnly) ) {
         QMessageBox::critical(
             0,
             "Error: opening labyrinth",
@@ -180,13 +276,10 @@ bool MainWindow::UI_ReadLabyrinthFile(QString importLabyrinthFile)
     line = in.readLine();
     listLine = line.split(" ");
 
-    if( listLine.size() != 4 )
-    {
+    if( listLine.size() != 4 ) {
         qDebug() << "error:labyrinth:validation_config";
         return false;
-    }
-    else
-    {
+    } else {
         int countLines;
         int positionValue;
         int numberLines    = listLine.at(0).toInt();
@@ -196,10 +289,9 @@ bool MainWindow::UI_ReadLabyrinthFile(QString importLabyrinthFile)
 
         int labyrinth[numberLines][numberColumns];
 
-        for(countLines=0; ! in.atEnd(); countLines++)
-        {
-            if( numberLines < countLines )
-            {
+        // validation
+        for(countLines=0; ! in.atEnd(); countLines++) {
+            if( numberLines < countLines ) {
                 qDebug() << "error:labyrinth:validation_lines_size";
                 return false;
             }
@@ -207,17 +299,14 @@ bool MainWindow::UI_ReadLabyrinthFile(QString importLabyrinthFile)
             line = in.readLine();
             listLine = line.split(" ");
 
-            if( listLine.size() != numberColumns )
-            {
+            if( listLine.size() != numberColumns ) {
                 qDebug() << "error:labyrinth:validation_columns_size";
                 return false;
             }
 
-            for(int c=0; c<listLine.size(); c++)
-            {
+            for(int c=0; c<listLine.size(); c++) {
                 positionValue = listLine.at(c).toInt();
-                if( positionValue < 0 || positionValue > 3 )
-                {
+                if( positionValue < 0 || positionValue > 3 ) {
                     qDebug() << "error:labyrinth:validation_elements";
                     return false;
                 }
@@ -225,30 +314,31 @@ bool MainWindow::UI_ReadLabyrinthFile(QString importLabyrinthFile)
             }
         }
 
-        if( countLines != numberLines )
-        {
+        if( countLines != numberLines ) {
             qDebug() << "error:labyrinth:validation_lines_size";
             return false;
         }
         // end all_validataion
         // ---------------------------
 
-        deleteLabyrinth();
+        //deleteLabyrinth();
 
-        this->lines = numberLines;
-        this->columns = numberColumns;
         this->costHorizontal = costHorizontal;
         this->costVertical = costVertical;
+        this->costDiagonal = getDiagonal(this->costHorizontal, this->costVertical);
 
-        allocateLabyrinth();
+        //allocateLabyrinth();
+
+        UI_clearBoard();
+        UI_resizeBoard(numberLines, numberColumns);
 
         for(int l=0; l < this->lines; l++) {
             for(int c=0; c < this->columns; c++) {
-                this->labyrinth[l][c] = labyrinth[l][c];
+                UI_setCellValue(l,c,labyrinth[l][c]);
             }
         }
 
-        UI_setConfig();
+        UI_updateUI();
     }
 
     labyrinthFile.close();
@@ -279,8 +369,7 @@ bool MainWindow::UI_WriteLabyrinthFile(QString saveLabyrinthFile)
 {
     QFile labyrinthFile(saveLabyrinthFile);
 
-    if( ! labyrinthFile.open(QIODevice::WriteOnly) )
-    {
+    if( ! labyrinthFile.open(QIODevice::WriteOnly) ) {
         QMessageBox::critical(
             0,
             "Error: create labyrinth",
@@ -295,11 +384,9 @@ bool MainWindow::UI_WriteLabyrinthFile(QString saveLabyrinthFile)
         << this->costHorizontal << ' '
         << this->costVertical << endl;
 
-    for(int l = 0; l<this->lines; l++)
-    {
-        for(int c = 0; c<this->columns-1; c++)
-        {
-            out << this->labyrinth[l][c] << ' ';
+    for(int l = 0; l<this->lines; l++) {
+        for(int c = 0; c<this->columns-1; c++) {
+            //out << this->labyrinth[l][c] << ' ';
         }
         out << endl;
     }
@@ -332,58 +419,99 @@ void MainWindow::UI_SaveLabyrinth()
     UI_WriteLabyrinthFile(saveLabyrinthFile);
 }
 
+void MainWindow::disableStartCell(int line, int column)
+{
+    if(line == startPosition.line && column == startPosition.column)
+    {
+        startPosition.active = false;
+    }
+}
+
+void MainWindow::disableEndCell(int line, int column)
+{
+    if(line == endPosition.line && column == endPosition.column)
+        endPosition.active = false;
+}
+
 void MainWindow::UI_changeType(int line, int column)
 {
     if(ui->rb_start->isChecked() && (this->startPosition.line != line \
             || this->startPosition.column != column) )
     {
-        ui->board->item(line,column)->data(0) = CELL_START;
-        ui->board->item(line,column)->setBackgroundColor(this->colors.start);
-
-        if(this->startPosition.active)
-        {
-            ui->board->item(this->startPosition.line, this->startPosition.column)->\
-                    setBackgroundColor(this->colors.free);
-        }
-
-        this->startPosition.line = line;
-        this->startPosition.column = column;
-        this->startPosition.active = true;
+        UI_setCellValue(line,column, CELL_START);
     }
     else if(ui->rb_end->isChecked() && (this->endPosition.line != line \
             || this->endPosition.column != column) )
     {
-        ui->board->item(this->endPosition.line, this->endPosition.column)->\
-                setBackgroundColor(this->colors.free);
-
-        ui->board->item(line,column)->data(0) = CELL_END;
-        ui->board->item(line,column)->setBackgroundColor(this->colors.end);
-
-        this->endPosition.line = line;
-        this->endPosition.column = column;
+        UI_setCellValue(line, column, CELL_END);
     }
     else if(ui->rb_wall->isChecked())
     {
-        ui->board->item(line,column)->data(0) = CELL_WALL;
-        ui->board->item(line,column)->setBackgroundColor(this->colors.wall);
+        UI_setCellValue(line, column, CELL_WALL);
     }
     else if(ui->rb_clearCell->isChecked())
     {
-        ui->board->item(line,column)->data(0) = CELL_FREE;
-        ui->board->item(line,column)->setBackgroundColor(this->colors.free);
+        UI_setCellValue(line, column, CELL_FREE);
     }
 }
 
-void MainWindow::UI_cleanBoard()
+void MainWindow::UI_resizeBoard(int lines, int columns)
 {
-    for(int l=0; l<this->lines; l++)
+    if(lines != this->lines)
     {
-        for(int c=0; c<this->columns; c++)
-        {
-            ui->board->item(l,c)->data(0) = CELL_FREE;
-            ui->board->item(l,c)->setBackgroundColor(this->colors.free);
-        }
+        ui->board->setRowCount(lines);
+
+        // resize
+        if(lines > this->lines)
+            UI_createCellsBoard(this->lines, lines, 0, this->columns);
+
+        if(startPosition.line > lines)
+            startPosition.active = false;
+        else if(endPosition.line > lines)
+            endPosition.active = false;
+
+        this->lines = lines;
     }
+
+    if(columns != this->columns)
+    {
+        ui->board->setColumnCount(columns);
+
+        // resize
+        if(columns > this->columns)
+            UI_createCellsBoard(0, this->lines, this->columns, columns);
+
+        if(startPosition.column > columns)
+            startPosition.active = false;
+        else if(endPosition.column > columns)
+            endPosition.active = false;
+
+        this->columns = columns;
+    }
+}
+
+void MainWindow::UI_newBoard()
+{
+    int lines = ui->sb_lines->value();
+    int columns = ui->sb_columns->value();
+
+    this->costHorizontal = ui->sb_costHorizontal->value();
+    this->costVertical = ui->sb_costVertical->value();
+    this->costDiagonal = ui->sb_costDiagonal->value();
+
+    UI_resizeBoard(lines, columns);
+
+    ui->pb_newBoard->setDisabled(true);
+    ui->pb_newBoard->setStyleSheet("background-color: none");
+}
+
+void MainWindow::UI_newCostDiagonal()
+{
+    float costHorizontal = ui->sb_costHorizontal->value();
+    float costVertical = ui->sb_costVertical->value();
+    float costDiagonal = getDiagonal(costHorizontal, costVertical);
+
+    ui->sb_costDiagonal->setValue(costDiagonal);
 }
 
 void MainWindow::allocateLabyrinth()
@@ -413,13 +541,12 @@ void MainWindow::deleteLabyrinth()
     this->labyrinth = nullptr;
 }
 
-float MainWindow::getCostDiagonal()
+float MainWindow::getDiagonal(float a, float b)
 {
     float cost;
-    int d = 10;
+    float d = 10;
 
-    cost = sqrt( pow(this->costHorizontal,2) \
-                 + pow(this->costVertical,2) );
+    cost = sqrt( pow(a,2) + pow(b,2) );
 
     cost = int(cost*d);
     return cost/d;

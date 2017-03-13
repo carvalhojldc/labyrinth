@@ -46,7 +46,15 @@ public:
     ~MainWindow();
 
 private slots:
+    void UI_changeButtonUpdate();
+
+    void UI_updateUI();
     void UI_setConfig();
+
+    void UI_setCellValue(int line, int column, int value);
+    void UI_clearBoard();
+    void UI_createCellsBoard(int startLine, int endLine, \
+                int startColumn, int endColumn);
     void UI_setBoard();
 
     void UI_license();
@@ -60,9 +68,14 @@ private slots:
     void UI_SaveLabyrinth();
     // end read_write
 
+    void disableStartCell(int line, int column);
+    void disableEndCell(int line, int column);
     void UI_changeType(int,int);
 
-    void UI_cleanBoard();
+    void UI_resizeBoard(int lines, int columns);
+    void UI_newBoard();
+
+    void UI_newCostDiagonal();
 
 private:
     Ui::MainWindow *ui;
@@ -72,7 +85,7 @@ private:
     void allocateLabyrinth();
     void deleteLabyrinth();
 
-    float getCostDiagonal();
+    float getDiagonal(float a, float b);
 
     // for import/save labyrinth file
     QString userName;
@@ -81,9 +94,8 @@ private:
     QString saveLabyrinthFile;
 
     // labyrinth configuration
-    int lines, columns, \
-        costHorizontal, costVertical;
-    float costDiagonal;
+    int lines, columns;
+    float costHorizontal, costVertical, costDiagonal;
     int **labyrinth;
 
     Position startPosition, endPosition;

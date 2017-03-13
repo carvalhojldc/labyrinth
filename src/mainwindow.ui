@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>885</width>
-    <height>753</height>
+    <width>925</width>
+    <height>698</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -22,15 +22,15 @@
      <rect>
       <x>10</x>
       <y>14</y>
-      <width>241</width>
-      <height>551</height>
+      <width>251</width>
+      <height>441</height>
      </rect>
     </property>
     <property name="title">
      <string>Configuração do labirinto</string>
     </property>
-    <layout class="QVBoxLayout" name="verticalLayout">
-     <item>
+    <layout class="QGridLayout" name="gridLayout_3">
+     <item row="0" column="0">
       <widget class="QGroupBox" name="groupBox_2">
        <property name="title">
         <string>Dimensão e custo</string>
@@ -38,6 +38,26 @@
        <layout class="QVBoxLayout" name="verticalLayout_3">
         <item>
          <layout class="QFormLayout" name="formLayout">
+          <item row="0" column="0">
+           <widget class="QLabel" name="lb_lines">
+            <property name="text">
+             <string>Linhas</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QSpinBox" name="sb_lines"/>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="lb_columns">
+            <property name="text">
+             <string>Colunas</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QSpinBox" name="sb_columns"/>
+          </item>
           <item row="2" column="0">
            <widget class="QLabel" name="lb_costHorizontal">
             <property name="text">
@@ -45,10 +65,23 @@
             </property>
            </widget>
           </item>
+          <item row="2" column="1">
+           <widget class="QDoubleSpinBox" name="sb_costHorizontal"/>
+          </item>
           <item row="3" column="0">
            <widget class="QLabel" name="lb_costVertical">
             <property name="text">
              <string>Custo vertical</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
+           <widget class="QDoubleSpinBox" name="sb_costVertical"/>
+          </item>
+          <item row="4" column="1">
+           <widget class="QDoubleSpinBox" name="sb_costDiagonal">
+            <property name="singleStep">
+             <double>0.500000000000000</double>
             </property>
            </widget>
           </item>
@@ -59,52 +92,19 @@
             </property>
            </widget>
           </item>
-          <item row="1" column="1">
-           <widget class="QSpinBox" name="sb_columns"/>
-          </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="lb_columns">
-            <property name="text">
-             <string>Colunas</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QSpinBox" name="sb_lines"/>
-          </item>
-          <item row="0" column="0">
-           <widget class="QLabel" name="lb_lines">
-            <property name="text">
-             <string>Linhas</string>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="1">
-           <widget class="QDoubleSpinBox" name="sb_costDiagonal">
-            <property name="singleStep">
-             <double>0.500000000000000</double>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="1">
-           <widget class="QDoubleSpinBox" name="sb_costVertical"/>
-          </item>
-          <item row="2" column="1">
-           <widget class="QDoubleSpinBox" name="sb_costHorizontal"/>
-          </item>
          </layout>
         </item>
         <item>
-         <widget class="QPushButton" name="pushButton">
+         <widget class="QPushButton" name="pb_newBoard">
           <property name="text">
-           <string>Gerar </string>
+           <string> Atualizar</string>
           </property>
          </widget>
         </item>
        </layout>
       </widget>
      </item>
-     <item>
+     <item row="1" column="0">
       <widget class="QGroupBox" name="gb_drawing">
        <property name="enabled">
         <bool>true</bool>
@@ -112,53 +112,43 @@
        <property name="title">
         <string>Desenho do labirinto</string>
        </property>
-       <layout class="QVBoxLayout" name="verticalLayout_2">
-        <item>
+       <layout class="QGridLayout" name="gridLayout_2">
+        <item row="0" column="0">
          <widget class="QRadioButton" name="rb_start">
           <property name="text">
            <string>Partida</string>
           </property>
          </widget>
         </item>
-        <item>
-         <widget class="QRadioButton" name="rb_end">
-          <property name="text">
-           <string>Chegada</string>
-          </property>
-         </widget>
-        </item>
-        <item>
+        <item row="2" column="0">
          <widget class="QRadioButton" name="rb_wall">
           <property name="text">
            <string>Obstáculo</string>
           </property>
          </widget>
         </item>
-        <item>
+        <item row="1" column="0">
+         <widget class="QRadioButton" name="rb_end">
+          <property name="text">
+           <string>Chegada</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0">
          <widget class="QRadioButton" name="rb_clearCell">
           <property name="text">
            <string>Apagar posição</string>
           </property>
          </widget>
         </item>
-        <item>
+        <item row="4" column="0">
          <widget class="QPushButton" name="pb_clearBoard">
           <property name="text">
-           <string>Apagar labirinto</string>
+           <string> Apagar labirinto</string>
           </property>
          </widget>
         </item>
        </layout>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="pb_start">
-       <property name="enabled">
-        <bool>true</bool>
-       </property>
-       <property name="text">
-        <string>Start</string>
-       </property>
       </widget>
      </item>
     </layout>
@@ -166,20 +156,27 @@
    <widget class="QTableWidget" name="board">
     <property name="geometry">
      <rect>
-      <x>260</x>
-      <y>30</y>
-      <width>581</width>
-      <height>581</height>
+      <x>270</x>
+      <y>10</y>
+      <width>640</width>
+      <height>640</height>
      </rect>
     </property>
-    <property name="selectionMode">
-     <enum>QAbstractItemView::NoSelection</enum>
-    </property>
-    <property name="showGrid">
+   </widget>
+   <widget class="QPushButton" name="pb_start">
+    <property name="enabled">
      <bool>true</bool>
     </property>
-    <property name="gridStyle">
-     <enum>Qt::DashDotDotLine</enum>
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>470</y>
+      <width>211</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string> Start</string>
     </property>
    </widget>
   </widget>
@@ -188,8 +185,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>885</width>
-     <height>22</height>
+     <width>925</width>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuAbout">
