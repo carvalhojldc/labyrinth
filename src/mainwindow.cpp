@@ -8,12 +8,20 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     // var
-    this->lines = 5;
-    this->columns = 5;
+    this->lines = 10;
+    this->columns = 10;
     this->costHorizontal = 1;
     this->costVertical = 2;
     this->labyrinth = nullptr;
     allocateLabyrinth();
+
+    this->startPosition.line = 0;
+    this->startPosition.column = 0;
+
+    this->endPosition.line = this->startPosition.line+1;
+    this->endPosition.column = this->startPosition.column+1;
+
+    drawingMode = false;
 
     // for import/save labyrinth file
 
@@ -36,6 +44,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->pb_ImportLabyrinth, SIGNAL(clicked(bool)), this, SLOT(UI_ImportLabyrinth()));
     connect(ui->pb_SaveLabyrinth, SIGNAL(clicked(bool)), this, SLOT(UI_SaveLabyrinth()));
 
+    connect(ui->pb_drawing, SIGNAL(clicked(bool)), this, SLOT(UI_Drawing()));
+
+    connect(ui->board, SIGNAL(cellClicked(int,int)),this, SLOT(UI_changeType(int,int)));
     // end connect
     // --------------
 
@@ -44,6 +55,34 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // end UI
     // --------------
+
+    ui->board->setRowCount(this->lines);
+    ui->board->setColumnCount(this->columns);
+    ui->board->verticalHeader()->setVisible(false);
+    ui->board->horizontalHeader()->setVisible(false);
+    ui->board->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    ui->board->verticalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+
+    for(int l=0; l<this->lines; l++)
+    {
+        for(int c=0; c<this->columns; c++)
+        {
+            ui->board->setItem(l,c, new QTableWidgetItem(0));
+            ui->board->item(l,c)->setData(0,CELL_FREE);
+        }
+    }
+    ui->board->item(this->startPosition.line,this->startPosition.column)->data(0) = CELL_START;
+    ui->board->item(this->startPosition.line,this->startPosition.column)->setBackgroundColor(Qt::green);
+
+    ui->board->item(this->endPosition.line,this->endPosition.column)->data(0) = CELL_END;
+    ui->board->item(this->endPosition.line,this->endPosition.column)->setBackgroundColor(Qt::blue);
+   // ui->board->horizontalHeader()->setStretchLastSection( true );
+    //ui->board->verticalHeader()->setStretchLastSection( true );
+
+    // edit
+    ui->pb_ImportLabyrinth->setVisible(false);
+    ui->pb_SaveLabyrinth->setVisible(false);
+
 }
 
 void MainWindow::UI_setConfig()
@@ -317,4 +356,59 @@ void MainWindow::deleteLabyrinth()
     delete []this->labyrinth;
 
     this->labyrinth = nullptr;
+}
+
+void MainWindow::UI_Drawing()
+{
+    if(this->drawingMode == false )
+    {
+        this->drawingMode = true;
+        //ui->gb_drawing->setDisabled(false);
+        ui->gb_drawing->setVisible(true);
+
+        ui->pb_drawing->setText("Finalizar desenho");
+    }
+    else
+    {
+        this->drawingMode = false;
+        //ui->gb_drawing->setDisabled(true);
+        ui->gb_drawing->setVisible(false);
+
+        ui->pb_drawing->setText("Inicicar desenho");
+    }
+}
+
+void MainWindow::UI_changeType(int line, int column)
+{
+    qDebug() << line << column;
+
+    if(ui->rb_start->isChecked() && (this->startPosition.line != line \
+            || this->startPosition.column != column) )
+    {
+        ui->board->item(line,column)->data(0) = CELL_START;
+        ui->board->item(line,column)->setBackgroundColor(Qt::green);
+
+        ui->board->item(this->startPosition.line, this->startPosition.column)->\
+                setBackgroundColor(Qt::white);
+
+        this->startPosition.line = line;
+        this->startPosition.column = column;
+    }
+    else if(ui->rb_end->isChecked() && (this->endPosition.line != line \
+            || this->endPosition.column != column) )
+    {
+        ui->board->item(this->endPosition.line, this->endPosition.column)->\
+                setBackgroundColor(Qt::white);
+
+        ui->board->item(line,column)->data(0) = CELL_END;
+        ui->board->item(line,column)->setBackgroundColor(Qt::blue);
+
+        this->endPosition.line = line;
+        this->endPosition.column = column;
+    }
+    else if(ui->rb_wall->isChecked())
+    {
+        ui->board->item(line,column)->data(0) = CELL_WALL;
+        ui->board->item(line,column)->setBackgroundColor(Qt::black);
+    }
 }

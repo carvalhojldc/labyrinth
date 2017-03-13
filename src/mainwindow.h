@@ -4,12 +4,23 @@
 #include <QMainWindow>
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QTableWidget>
 
 #include <QDebug>
 
 #define DEBUG
 #define DEBUG_IMPORT_LABYRINTH
 #define DEBUG_READ_LABYRINTH
+
+#define CELL_FREE  0
+#define CELL_WALL  1
+#define CELL_START 2
+#define CELL_END   3
+
+struct Position {
+    int line;
+    int column;
+};
 
 namespace Ui {
 class MainWindow;
@@ -32,6 +43,10 @@ private slots:
     void UI_license();
     void UI_help();
 
+    void UI_Drawing();
+
+    void UI_changeType(int,int);
+
 private:
     Ui::MainWindow *ui;
 
@@ -48,6 +63,10 @@ private:
     int lines, columns, \
         costHorizontal, costVertical;
     int **labyrinth;
+
+    Position startPosition, endPosition;
+
+    bool drawingMode;
 
     QString programTitle = "CJL Labyrinth - A*";
 
