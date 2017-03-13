@@ -46,6 +46,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionLicense,         SIGNAL(triggered(bool)), this, SLOT(UI_license()));
     connect(ui->actionHelp,            SIGNAL(triggered(bool)), this, SLOT(UI_help()));
 
+    connect(ui->pb_clearBoard, SIGNAL(clicked(bool)), this, SLOT(UI_cleanBoard()));
+
     connect(ui->board, SIGNAL(cellClicked(int,int)), this, SLOT(UI_changeType(int,int)));
 
     // end connect
@@ -336,12 +338,12 @@ void MainWindow::UI_changeType(int line, int column)
             || this->startPosition.column != column) )
     {
         ui->board->item(line,column)->data(0) = CELL_START;
-        ui->board->item(line,column)->setBackgroundColor(Qt::green);
+        ui->board->item(line,column)->setBackgroundColor(this->colors.start);
 
         if(this->startPosition.active)
         {
             ui->board->item(this->startPosition.line, this->startPosition.column)->\
-                    setBackgroundColor(Qt::white);
+                    setBackgroundColor(this->colors.free);
         }
 
         this->startPosition.line = line;
@@ -352,10 +354,10 @@ void MainWindow::UI_changeType(int line, int column)
             || this->endPosition.column != column) )
     {
         ui->board->item(this->endPosition.line, this->endPosition.column)->\
-                setBackgroundColor(Qt::white);
+                setBackgroundColor(this->colors.free);
 
         ui->board->item(line,column)->data(0) = CELL_END;
-        ui->board->item(line,column)->setBackgroundColor(Qt::blue);
+        ui->board->item(line,column)->setBackgroundColor(this->colors.end);
 
         this->endPosition.line = line;
         this->endPosition.column = column;
@@ -363,7 +365,24 @@ void MainWindow::UI_changeType(int line, int column)
     else if(ui->rb_wall->isChecked())
     {
         ui->board->item(line,column)->data(0) = CELL_WALL;
-        ui->board->item(line,column)->setBackgroundColor(Qt::black);
+        ui->board->item(line,column)->setBackgroundColor(this->colors.wall);
+    }
+    else if(ui->rb_clearCell->isChecked())
+    {
+        ui->board->item(line,column)->data(0) = CELL_FREE;
+        ui->board->item(line,column)->setBackgroundColor(this->colors.free);
+    }
+}
+
+void MainWindow::UI_cleanBoard()
+{
+    for(int l=0; l<this->lines; l++)
+    {
+        for(int c=0; c<this->columns; c++)
+        {
+            ui->board->item(l,c)->data(0) = CELL_FREE;
+            ui->board->item(l,c)->setBackgroundColor(this->colors.free);
+        }
     }
 }
 

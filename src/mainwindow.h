@@ -23,6 +23,7 @@ struct Colors
     const QString start = "green";
     const QString end = "blue";
     const QString wall = "black";
+    const QString free = "white";
 };
 
 struct Position
@@ -60,6 +61,8 @@ private slots:
     // end read_write
 
     void UI_changeType(int,int);
+
+    void UI_cleanBoard();
 
 private:
     Ui::MainWindow *ui;
