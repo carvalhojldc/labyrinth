@@ -157,7 +157,7 @@
     <property name="geometry">
      <rect>
       <x>270</x>
-      <y>10</y>
+      <y>30</y>
       <width>640</width>
       <height>640</height>
      </rect>
@@ -179,6 +179,19 @@
      <string> Start</string>
     </property>
    </widget>
+   <widget class="QLabel" name="lb_info">
+    <property name="geometry">
+     <rect>
+      <x>270</x>
+      <y>6</y>
+      <width>641</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
@@ -186,7 +199,7 @@
      <x>0</x>
      <y>0</y>
      <width>925</width>
-     <height>20</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuAbout">

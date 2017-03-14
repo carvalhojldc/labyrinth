@@ -1069,50 +1069,7 @@ mainwindow.o: ../src/mainwindow.cpp ../src/mainwindow.h \
 		/opt/Qt5.8.0/5.8/gcc_64/include/QtCore/QStandardPaths \
 		/opt/Qt5.8.0/5.8/gcc_64/include/QtCore/qstandardpaths.h \
 		/opt/Qt5.8.0/5.8/gcc_64/include/QtCore/QDebug \
-		ui_mainwindow.h \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtCore/QVariant \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/QAction \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/qaction.h \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/qactiongroup.h \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/QApplication \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/qapplication.h \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtCore/qcoreapplication.h \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtCore/qeventloop.h \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/qdesktopwidget.h \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtGui/qguiapplication.h \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtGui/qinputmethod.h \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/QButtonGroup \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/qbuttongroup.h \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/QDoubleSpinBox \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/qspinbox.h \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/QFormLayout \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/qformlayout.h \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/QLayout \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/qlayout.h \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/qlayoutitem.h \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/qboxlayout.h \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/qgridlayout.h \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/QGridLayout \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/QGroupBox \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/qgroupbox.h \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/QHeaderView \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/qheaderview.h \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/QLabel \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/qlabel.h \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/QMenu \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/qmenu.h \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/QMenuBar \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/qmenubar.h \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/QPushButton \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/qpushbutton.h \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/qabstractbutton.h \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/QRadioButton \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/qradiobutton.h \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/QSpinBox \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/QStatusBar \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/qstatusbar.h \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/QVBoxLayout \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/QWidget
+		ui_mainwindow.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o mainwindow.o ../src/mainwindow.cpp
 
 moc_mainwindow.o: moc_mainwindow.cpp 

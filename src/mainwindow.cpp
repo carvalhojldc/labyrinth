@@ -121,8 +121,8 @@ void MainWindow::UI_setConfig()
 }
 
 void MainWindow::UI_setCellValue(int line, int column, int value)
-{
-    ui->board->item(line,column)->data(0) = value;
+{   
+    ui->board->item(line,column)->setData(0,value);
 
     if(value == CELL_START)
     {
@@ -131,6 +131,9 @@ void MainWindow::UI_setCellValue(int line, int column, int value)
         if(this->startPosition.active) {
             ui->board->item(this->startPosition.line, this->startPosition.column)\
                     ->setBackgroundColor(this->colors.free);
+
+            ui->board->item(this->startPosition.line, this->startPosition.column)->setTextColor( \
+                        ui->board->item(this->endPosition.line,this->endPosition.column)->backgroundColor() );
         }
 
         disableEndCell(line, column);
@@ -146,6 +149,9 @@ void MainWindow::UI_setCellValue(int line, int column, int value)
         if(this->endPosition.active) {
             ui->board->item(this->endPosition.line, this->endPosition.column)\
                     ->setBackgroundColor(this->colors.free);
+
+            ui->board->item(this->endPosition.line,this->endPosition.column)->setTextColor( \
+                        ui->board->item(this->endPosition.line,this->endPosition.column)->backgroundColor() );
         }
         disableStartCell(line, column);
 
@@ -167,6 +173,8 @@ void MainWindow::UI_setCellValue(int line, int column, int value)
         disableStartCell(line, column);
         disableEndCell(line, column);
     }
+
+    ui->board->item(line,column)->setTextColor( ui->board->item(line,column)->backgroundColor() );
 }
 
 void MainWindow::UI_clearBoard()
@@ -184,7 +192,10 @@ void MainWindow::UI_createCellsBoard(int startLine, int endLine, \
     for(int l=startLine; l<endLine; l++) {
         for(int c=startColumn; c<endColumn; c++) {
             ui->board->setItem(l, c, new QTableWidgetItem(0));
-            ui->board->item(l, c)->setData(0,CELL_FREE);
+            //ui->board->setItem(l, c, new QTableWidgetItem(1));
+            //ui->board->item(l, c)->setData(0,CELL_FREE);
+            UI_setCellValue(l, c, CELL_FREE);
+            //ui->board->item(l, c)->setData(1,0);
         }
     }
 }
@@ -276,70 +287,70 @@ bool MainWindow::UI_ReadLabyrinthFile(QString importLabyrinthFile)
     line = in.readLine();
     listLine = line.split(" ");
 
+    // validation
     if( listLine.size() != 4 ) {
         qDebug() << "error:labyrinth:validation_config";
         return false;
-    } else {
-        int countLines;
-        int positionValue;
-        int numberLines    = listLine.at(0).toInt();
-        int numberColumns  = listLine.at(1).toInt();
-        int costHorizontal = listLine.at(2).toInt();
-        int costVertical   = listLine.at(3).toInt();
+    }
 
-        int labyrinth[numberLines][numberColumns];
+    int countLines;
+    int positionValue;
+    int numberLines    = listLine.at(0).toInt();
+    int numberColumns  = listLine.at(1).toInt();
+    int costHorizontal = listLine.at(2).toInt();
+    int costVertical   = listLine.at(3).toInt();
 
-        // validation
-        for(countLines=0; ! in.atEnd(); countLines++) {
-            if( numberLines < countLines ) {
-                qDebug() << "error:labyrinth:validation_lines_size";
-                return false;
-            }
+    int labyrinth[numberLines][numberColumns];
 
-            line = in.readLine();
-            listLine = line.split(" ");
-
-            if( listLine.size() != numberColumns ) {
-                qDebug() << "error:labyrinth:validation_columns_size";
-                return false;
-            }
-
-            for(int c=0; c<listLine.size(); c++) {
-                positionValue = listLine.at(c).toInt();
-                if( positionValue < 0 || positionValue > 3 ) {
-                    qDebug() << "error:labyrinth:validation_elements";
-                    return false;
-                }
-                labyrinth[countLines][c] = positionValue;
-            }
-        }
-
-        if( countLines != numberLines ) {
+    for(countLines=0; ! in.atEnd(); countLines++) {
+        if( numberLines < countLines ) {
             qDebug() << "error:labyrinth:validation_lines_size";
             return false;
         }
-        // end all_validataion
-        // ---------------------------
 
-        //deleteLabyrinth();
+        line = in.readLine();
+        listLine = line.split(" ");
 
-        this->costHorizontal = costHorizontal;
-        this->costVertical = costVertical;
-        this->costDiagonal = getDiagonal(this->costHorizontal, this->costVertical);
-
-        //allocateLabyrinth();
-
-        UI_clearBoard();
-        UI_resizeBoard(numberLines, numberColumns);
-
-        for(int l=0; l < this->lines; l++) {
-            for(int c=0; c < this->columns; c++) {
-                UI_setCellValue(l,c,labyrinth[l][c]);
-            }
+        if( listLine.size() != numberColumns ) {
+            qDebug() << "error:labyrinth:validation_columns_size";
+            return false;
         }
 
-        UI_updateUI();
+        for(int c=0; c<listLine.size(); c++) {
+            positionValue = listLine.at(c).toInt();
+            if( positionValue < 0 || positionValue > 3 ) {
+                qDebug() << "error:labyrinth:validation_elements";
+                return false;
+            }
+            labyrinth[countLines][c] = positionValue;
+        }
     }
+
+    if( countLines != numberLines ) {
+        qDebug() << "error:labyrinth:validation_lines_size";
+        return false;
+    }
+    // end all_validataion
+    // ---------------------------
+
+    //deleteLabyrinth();
+
+    this->costHorizontal = costHorizontal;
+    this->costVertical = costVertical;
+    this->costDiagonal = getDiagonal(this->costHorizontal, this->costVertical);
+
+    //allocateLabyrinth();
+
+    UI_clearBoard();
+    UI_resizeBoard(numberLines, numberColumns);
+
+    for(int l=0; l < this->lines; l++) {
+        for(int c=0; c < this->columns; c++) {
+            UI_setCellValue(l,c,labyrinth[l][c]);
+        }
+    }
+
+    UI_updateUI();
 
     labyrinthFile.close();
 
@@ -356,8 +367,7 @@ void MainWindow::UI_ImportLabyrinth()
 
     if( importLabyrinthFile.isEmpty() == true ) return;
 
-    if( UI_ReadLabyrinthFile(importLabyrinthFile) == false )
-    {
+    if( UI_ReadLabyrinthFile(importLabyrinthFile) == false ) {
         QMessageBox::critical(
             0,
             "Erro na leitura",
@@ -385,8 +395,13 @@ bool MainWindow::UI_WriteLabyrinthFile(QString saveLabyrinthFile)
         << this->costVertical << endl;
 
     for(int l = 0; l<this->lines; l++) {
-        for(int c = 0; c<this->columns-1; c++) {
+        for(int c = 0; c<this->columns; c++) {
             //out << this->labyrinth[l][c] << ' ';
+            out << ui->board->item(l,c)->data(0).toInt();
+
+            if(c != this->columns-1)
+                out << ' ';
+
         }
         out << endl;
     }
