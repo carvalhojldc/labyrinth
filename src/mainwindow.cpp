@@ -49,8 +49,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->pb_clearBoard, SIGNAL(clicked(bool)), this, SLOT(UI_clearBoard()));
     connect(ui->pb_newBoard,   SIGNAL(clicked(bool)), this, SLOT(UI_newBoard()));
 
-    connect(ui->board, SIGNAL(cellClicked(int,int)), this, SLOT(UI_changeType(int,int)));
-    connect(ui->board,SIGNAL( currentRowChanged(QModelIndex,QModelIndex ) ), this, SLOT(UI_changeType(int,int)));
+    connect(ui->board, SIGNAL(cellClicked(int,int)), this, SLOT(UI_changeCell(int,int)));
 
     connect(ui->sb_costHorizontal, SIGNAL(valueChanged(double)), this, SLOT(UI_newCostDiagonal()));
     connect(ui->sb_costVertical,   SIGNAL(valueChanged(double)), this, SLOT(UI_newCostDiagonal()));
@@ -58,6 +57,10 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->sb_costDiagonal,   SIGNAL(valueChanged(double)), this, SLOT(UI_changeButtonUpdate()));
     connect(ui->sb_columns,        SIGNAL(valueChanged(int)), this, SLOT(UI_changeButtonUpdate()));
     connect(ui->sb_lines,          SIGNAL(valueChanged(int)), this, SLOT(UI_changeButtonUpdate()));
+
+    connect(ui->cb_costDiagonal, SIGNAL(clicked(bool)), this, SLOT(UI_EditCostDiagonal(bool)));
+
+    connect(ui->pb_start, SIGNAL(clicked(bool)), this, SLOT(start()));
 
     // end connect
     // --------------
@@ -76,161 +79,6 @@ MainWindow::~MainWindow()
     delete ui;
 
     deleteLabyrinth();
-}
-
-void MainWindow::UI_changeButtonUpdate()
-{
-    ui->pb_newBoard->setDisabled(false);
-    ui->pb_newBoard->setStyleSheet("background-color: red");
-}
-
-void MainWindow::UI_updateUI()
-{
-    ui->sb_lines->setValue( this->lines );
-    ui->sb_columns->setValue( this->columns );
-    ui->sb_costHorizontal->setValue( this->costHorizontal );
-    ui->sb_costVertical->setValue( this->costVertical );
-    ui->sb_costDiagonal->setValue( this->costDiagonal );
-
-    ui->pb_newBoard->setDisabled(true);
-    ui->pb_newBoard->setStyleSheet("background-color: none");
-}
-
-void MainWindow::UI_setConfig()
-{
-    ui->actionImportLabyrinth->setIcon(this->style()->standardIcon(QStyle::SP_FileIcon));
-    ui->actionSaveLabyrinth->setIcon(this->style()->standardIcon(QStyle::SP_DialogSaveButton));
-    ui->actionHelp->setIcon(this->style()->standardIcon(QStyle::SP_DialogHelpButton));
-    ui->actionLicense->setIcon(this->style()->standardIcon(QStyle::SP_ComputerIcon));
-
-    ui->pb_newBoard->setIcon(this->style()->standardIcon(QStyle::SP_BrowserReload));
-    ui->pb_clearBoard->setIcon(this->style()->standardIcon(QStyle::SP_TrashIcon));
-    ui->pb_start->setIcon(this->style()->standardIcon(QStyle::SP_DialogYesButton));
-
-    ui->rb_wall->setIcon(QIcon("../icons/colors/" + colors.wall + ".png"));
-    ui->rb_start->setIcon(QIcon("../icons/colors/" + colors.start + ".png"));
-    ui->rb_end->setIcon(QIcon("../icons/colors/" + colors.end + ".png"));
-    ui->rb_clearCell->setIcon(QIcon("../icons/colors/" + colors.free + ".png"));
-
-
-    int max = 1000;
-    ui->sb_columns->setMaximum(max);
-    ui->sb_lines->setMaximum(max);
-    ui->sb_costDiagonal->setMaximum(max);
-    ui->sb_costHorizontal->setMaximum(max);
-    ui->sb_costDiagonal->setMaximum(max);
-}
-
-void MainWindow::UI_setCellValue(int line, int column, int value)
-{   
-    ui->board->item(line,column)->setData(0,value);
-
-    if(value == CELL_START)
-    {
-        ui->board->item(line,column)->setBackgroundColor(this->colors.start);
-
-        if(this->startPosition.active) {
-            ui->board->item(this->startPosition.line, this->startPosition.column)\
-                    ->setBackgroundColor(this->colors.free);
-
-            ui->board->item(this->startPosition.line, this->startPosition.column)->setTextColor( this->colors.free );
-        }
-
-        disableEndCell(line, column);
-
-        this->startPosition.line = line;
-        this->startPosition.column = column;
-        this->startPosition.active = true;
-    }
-    else if(value == CELL_END)
-    {
-        ui->board->item(line,column)->setBackgroundColor(this->colors.end);
-
-        if(this->endPosition.active) {
-            ui->board->item(this->endPosition.line, this->endPosition.column)\
-                    ->setBackgroundColor(this->colors.free);
-
-            ui->board->item(this->endPosition.line,this->endPosition.column)->setTextColor( \
-                        ui->board->item(this->endPosition.line,this->endPosition.column)->backgroundColor() );
-        }
-        disableStartCell(line, column);
-
-        this->endPosition.line = line;
-        this->endPosition.column = column;
-        this->endPosition.active = true;
-    }
-    else if(value == CELL_FREE)
-    {
-        ui->board->item(line,column)->setBackgroundColor(this->colors.free);
-
-        disableStartCell(line, column);
-        disableEndCell(line, column);
-    }
-    else if(value == CELL_WALL)
-    {
-        ui->board->item(line,column)->setBackgroundColor(this->colors.wall);
-
-        disableStartCell(line, column);
-        disableEndCell(line, column);
-    }
-
-    //ui->board->item(line,column)->setTextColor( ui->board->item(line,column)->backgroundColor() );
-
-    //ui->board->item(line,column)->setData(1,-1);
-
-    //ui->board->item(line,column)->setIcon(QIcon("../icons/colors/" + colors.wall + ".png"));
-}
-
-void MainWindow::UI_clearBoard()
-{
-    for(int l=0; l<this->lines; l++) {
-        for(int c=0; c<this->columns; c++) {
-            UI_setCellValue(l,c,CELL_FREE);
-        }
-    }
-}
-
-void MainWindow::UI_createCellsBoard(int startLine, int endLine, \
-            int startColumn, int endColumn)
-{
-    for(int l=startLine; l<endLine; l++) {
-        for(int c=startColumn; c<endColumn; c++) {
-            ui->board->setItem(l, c, new QTableWidgetItem(0));
-            ui->board->setItem(l, c, new QTableWidgetItem(1));
-            //ui->board->item(l, c)->setData(0,CELL_FREE);
-            UI_setCellValue(l, c, CELL_FREE);
-            //ui->board->item(l, c)->setData(1,0);
-        }
-    }
-}
-
-void MainWindow::UI_setBoard()
-{
-    ui->board->setRowCount(this->lines);
-    ui->board->setColumnCount(this->columns);
-
-    ui->board->verticalHeader()->setVisible(false);
-    ui->board->horizontalHeader()->setVisible(false);
-
-
-
-    //ui->board->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    //ui->board->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-
-    ui->board->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    //ui->board->setEditTriggers(QAbstractItemView::);
-
-    ui->board->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-    ui->board->verticalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-
-    ui->board->setGridStyle(Qt::DashLine);
-    //ui->board->setShowGrid(false);
-    //ui->board->setSelectionMode(QAbstractItemView::NoSelection);
-
-    ui->board->horizontalHeader()->setStretchLastSection( true );
-    ui->board->verticalHeader()->setStretchLastSection( true );
-
-    UI_createCellsBoard(0, this->lines, 0, this->columns);
 }
 
 void MainWindow::UI_license()
@@ -274,6 +122,238 @@ João Leite de Carvalho - carvalhojldc@gmail.com";
     help->setWindowTitle("Help");
 
     help->exec();
+}
+
+void MainWindow::UI_updateUI()
+{
+    ui->sb_lines->setValue( this->lines );
+    ui->sb_columns->setValue( this->columns );
+    ui->sb_costHorizontal->setValue( this->costHorizontal );
+    ui->sb_costVertical->setValue( this->costVertical );
+    ui->sb_costDiagonal->setValue( this->costDiagonal );
+
+    ui->pb_newBoard->setDisabled(true);
+    ui->pb_newBoard->setStyleSheet("background-color: none");
+}
+
+void MainWindow::UI_setConfig()
+{
+    ui->actionImportLabyrinth->setIcon(this->style()->standardIcon(QStyle::SP_FileIcon));
+    ui->actionSaveLabyrinth->setIcon(this->style()->standardIcon(QStyle::SP_DialogSaveButton));
+    ui->actionHelp->setIcon(this->style()->standardIcon(QStyle::SP_DialogHelpButton));
+    ui->actionLicense->setIcon(this->style()->standardIcon(QStyle::SP_ComputerIcon));
+
+    ui->pb_newBoard->setIcon(this->style()->standardIcon(QStyle::SP_BrowserReload));
+    ui->pb_clearBoard->setIcon(this->style()->standardIcon(QStyle::SP_TrashIcon));
+    ui->pb_start->setIcon(this->style()->standardIcon(QStyle::SP_DialogYesButton));
+
+    ui->rb_wall->setIcon(QIcon("../icons/colors/" + colors.wall + ".png"));
+    ui->rb_start->setIcon(QIcon("../icons/colors/" + colors.start + ".png"));
+    ui->rb_end->setIcon(QIcon("../icons/colors/" + colors.end + ".png"));
+    ui->rb_clearCell->setIcon(QIcon("../icons/colors/" + colors.free + ".png"));
+
+
+    ui->cb_costDiagonal->setChecked(true);
+    ui->sb_costDiagonal->setEnabled(false);
+
+    int max = 1000;
+    ui->sb_columns->setMaximum(max);
+    ui->sb_lines->setMaximum(max);
+    ui->sb_costDiagonal->setMaximum(max);
+    ui->sb_costHorizontal->setMaximum(max);
+    ui->sb_costDiagonal->setMaximum(max);
+}
+
+void MainWindow::UI_setBoard()
+{
+    ui->board->setRowCount(this->lines);
+    ui->board->setColumnCount(this->columns);
+
+    ui->board->verticalHeader()->setVisible(false);
+    ui->board->horizontalHeader()->setVisible(false);
+
+    ui->board->setEditTriggers(QAbstractItemView::NoEditTriggers);
+
+    ui->board->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    ui->board->verticalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+
+    ui->board->setGridStyle(Qt::DashLine);
+    //ui->board->setShowGrid(false);
+    ui->board->setSelectionMode(QAbstractItemView::NoSelection);
+
+    //ui->board->horizontalHeader()->setStretchLastSection( true );
+    //ui->board->verticalHeader()->setStretchLastSection( true );
+
+    UI_createCellsBoard(0, this->lines, 0, this->columns);
+}
+
+void MainWindow::UI_changeButtonUpdate()
+{
+    ui->pb_newBoard->setDisabled(false);
+    ui->pb_newBoard->setStyleSheet("background-color: red");
+}
+
+void MainWindow::UI_clearBoard()
+{
+    for(int l=0; l<this->lines; l++) {
+        for(int c=0; c<this->columns; c++) {
+            UI_setCellValue(l,c,CELL_FREE);
+        }
+    }
+}
+
+void MainWindow::UI_setCellValue(int line, int column, int value)
+{   
+    //ui->board->item(line,column)->setData(0,value);
+
+    if(value == CELL_START) {
+        ui->board->item(line,column)->setBackgroundColor(this->colors.start);
+
+        if(this->startPosition.active) {
+            ui->board->item(this->startPosition.line, this->startPosition.column)\
+                    ->setBackgroundColor(this->colors.free);
+
+            //ui->board->item(this->startPosition.line, this->startPosition.column)->setTextColor( this->colors.free );
+        }
+
+        disableEndCell(line, column);
+
+        this->startPosition.line = line;
+        this->startPosition.column = column;
+        this->startPosition.active = true;
+    } else if(value == CELL_END) {
+        ui->board->item(line,column)->setBackgroundColor(this->colors.end);
+
+        if(this->endPosition.active) {
+            ui->board->item(this->endPosition.line, this->endPosition.column)\
+                    ->setBackgroundColor(this->colors.free);
+
+           // ui->board->item(this->endPosition.line,this->endPosition.column)->setTextColor( \
+                        ui->board->item(this->endPosition.line,this->endPosition.column)->backgroundColor() );
+        }
+        disableStartCell(line, column);
+
+        this->endPosition.line = line;
+        this->endPosition.column = column;
+        this->endPosition.active = true;
+    }
+    else if(value == CELL_FREE) {
+        ui->board->item(line,column)->setBackgroundColor(this->colors.free);
+
+        disableStartCell(line, column);
+        disableEndCell(line, column);
+    } else if(value == CELL_WALL) {
+        ui->board->item(line,column)->setBackgroundColor(this->colors.wall);
+
+        disableStartCell(line, column);
+        disableEndCell(line, column);
+    }
+
+    //ui->board->item(line,column)->setTextColor( ui->board->item(line,column)->backgroundColor() );
+
+    //ui->board->item(line,column)->setData(1,-1);
+
+    //ui->board->item(line,column)->setIcon(QIcon("../icons/colors/" + colors.wall + ".png"));
+}
+
+void MainWindow::UI_createCellsBoard(int startLine, int endLine, \
+            int startColumn, int endColumn)
+{
+    for(int l=startLine; l<endLine; l++) {
+        for(int c=startColumn; c<endColumn; c++) {
+            ui->board->setItem(l, c, new QTableWidgetItem(0));
+           // ui->board->setItem(l, c, new QTableWidgetItem(1));
+            //ui->board->item(l, c)->setData(0,CELL_FREE);
+            UI_setCellValue(l, c, CELL_FREE);
+            //ui->board->item(l, c)->setData(1,0);
+        }
+    }
+}
+
+void MainWindow::UI_resizeBoard(int lines, int columns)
+{
+    if(lines != this->lines)
+    {
+        ui->board->setRowCount(lines);
+
+        // resize
+        if(lines > this->lines)
+            UI_createCellsBoard(this->lines, lines, 0, this->columns);
+
+        if(startPosition.line > lines)
+            startPosition.active = false;
+        else if(endPosition.line > lines)
+            endPosition.active = false;
+
+        this->lines = lines;
+    }
+
+    if(columns != this->columns)
+    {
+        ui->board->setColumnCount(columns);
+
+        // resize
+        if(columns > this->columns)
+            UI_createCellsBoard(0, this->lines, this->columns, columns);
+
+        if(startPosition.column > columns)
+            startPosition.active = false;
+        else if(endPosition.column > columns)
+            endPosition.active = false;
+
+        this->columns = columns;
+    }
+}
+
+void MainWindow::UI_newBoard()
+{
+    int lines = ui->sb_lines->value();
+    int columns = ui->sb_columns->value();
+
+    this->costHorizontal = ui->sb_costHorizontal->value();
+    this->costVertical = ui->sb_costVertical->value();
+    this->costDiagonal = ui->sb_costDiagonal->value();
+
+    UI_resizeBoard(lines, columns);
+
+    ui->pb_newBoard->setDisabled(true);
+    ui->pb_newBoard->setStyleSheet("background-color: none");
+}
+
+void MainWindow::disableStartCell(int line, int column)
+{
+    if(line == startPosition.line && column == startPosition.column)
+    {
+        startPosition.active = false;
+    }
+}
+
+void MainWindow::disableEndCell(int line, int column)
+{
+    if(line == endPosition.line && column == endPosition.column)
+        endPosition.active = false;
+}
+
+void MainWindow::UI_changeCell(int line, int column)
+{
+    if(ui->rb_start->isChecked() && ((this->startPosition.line != line \
+            || this->startPosition.column != column) || this->startPosition.active == false) )
+    {
+        UI_setCellValue(line,column, CELL_START);
+    }
+    else if(ui->rb_end->isChecked() && (this->endPosition.line != line \
+            || this->endPosition.column != column) )
+    {
+        UI_setCellValue(line, column, CELL_END);
+    }
+    else if(ui->rb_wall->isChecked())
+    {
+        UI_setCellValue(line, column, CELL_WALL);
+    }
+    else if(ui->rb_clearCell->isChecked())
+    {
+        UI_setCellValue(line, column, CELL_FREE);
+    }
 }
 
 bool MainWindow::UI_ReadLabyrinthFile(QString importLabyrinthFile)
@@ -407,7 +487,7 @@ bool MainWindow::UI_WriteLabyrinthFile(QString saveLabyrinthFile)
     for(int l = 0; l<this->lines; l++) {
         for(int c = 0; c<this->columns; c++) {
             //out << this->labyrinth[l][c] << ' ';
-            out << ui->board->item(l,c)->data(0).toInt();
+            //out << ui->board->item(l,c)->data(0).toInt();
 
             if(c != this->columns-1)
                 out << ' ';
@@ -444,99 +524,21 @@ void MainWindow::UI_SaveLabyrinth()
     UI_WriteLabyrinthFile(saveLabyrinthFile);
 }
 
-void MainWindow::disableStartCell(int line, int column)
-{
-    if(line == startPosition.line && column == startPosition.column)
-    {
-        startPosition.active = false;
-    }
-}
-
-void MainWindow::disableEndCell(int line, int column)
-{
-    if(line == endPosition.line && column == endPosition.column)
-        endPosition.active = false;
-}
-
-void MainWindow::UI_changeType(int line, int column)
-{
-    if(ui->rb_start->isChecked() && ((this->startPosition.line != line \
-            || this->startPosition.column != column) || this->startPosition.active == false) )
-    {
-        UI_setCellValue(line,column, CELL_START);
-    }
-    else if(ui->rb_end->isChecked() && (this->endPosition.line != line \
-            || this->endPosition.column != column) )
-    {
-        UI_setCellValue(line, column, CELL_END);
-    }
-    else if(ui->rb_wall->isChecked())
-    {
-        UI_setCellValue(line, column, CELL_WALL);
-    }
-    else if(ui->rb_clearCell->isChecked())
-    {
-        UI_setCellValue(line, column, CELL_FREE);
-    }
-}
-
-void MainWindow::UI_resizeBoard(int lines, int columns)
-{
-    if(lines != this->lines)
-    {
-        ui->board->setRowCount(lines);
-
-        // resize
-        if(lines > this->lines)
-            UI_createCellsBoard(this->lines, lines, 0, this->columns);
-
-        if(startPosition.line > lines)
-            startPosition.active = false;
-        else if(endPosition.line > lines)
-            endPosition.active = false;
-
-        this->lines = lines;
-    }
-
-    if(columns != this->columns)
-    {
-        ui->board->setColumnCount(columns);
-
-        // resize
-        if(columns > this->columns)
-            UI_createCellsBoard(0, this->lines, this->columns, columns);
-
-        if(startPosition.column > columns)
-            startPosition.active = false;
-        else if(endPosition.column > columns)
-            endPosition.active = false;
-
-        this->columns = columns;
-    }
-}
-
-void MainWindow::UI_newBoard()
-{
-    int lines = ui->sb_lines->value();
-    int columns = ui->sb_columns->value();
-
-    this->costHorizontal = ui->sb_costHorizontal->value();
-    this->costVertical = ui->sb_costVertical->value();
-    this->costDiagonal = ui->sb_costDiagonal->value();
-
-    UI_resizeBoard(lines, columns);
-
-    ui->pb_newBoard->setDisabled(true);
-    ui->pb_newBoard->setStyleSheet("background-color: none");
-}
-
 void MainWindow::UI_newCostDiagonal()
 {
-    float costHorizontal = ui->sb_costHorizontal->value();
-    float costVertical = ui->sb_costVertical->value();
-    float costDiagonal = getDiagonal(costHorizontal, costVertical);
+    if(ui->cb_costDiagonal->isChecked() == true)
+    {
+        float costHorizontal = ui->sb_costHorizontal->value();
+        float costVertical = ui->sb_costVertical->value();
+        float costDiagonal = getDiagonal(costHorizontal, costVertical);
 
-    ui->sb_costDiagonal->setValue(costDiagonal);
+        ui->sb_costDiagonal->setValue(costDiagonal);
+    }
+}
+
+void MainWindow::UI_EditCostDiagonal(bool value)
+{
+    ui->sb_costDiagonal->setDisabled(value);
 }
 
 void MainWindow::allocateLabyrinth()
@@ -569,10 +571,20 @@ void MainWindow::deleteLabyrinth()
 float MainWindow::getDiagonal(float a, float b)
 {
     float cost;
-    float d = 10;
+    float d = 100;
 
     cost = sqrt( pow(a,2) + pow(b,2) );
 
     cost = int(cost*d);
     return cost/d;
+}
+
+
+void MainWindow::start()
+{
+    this->costDiagonal   = ui->sb_costDiagonal->value();
+    this->costVertical   = ui->sb_costVertical->value();
+    this->costHorizontal = ui->sb_costHorizontal->value();
+
+    qDebug() << "run";
 }

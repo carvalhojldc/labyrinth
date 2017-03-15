@@ -46,19 +46,25 @@ public:
     ~MainWindow();
 
 private slots:
-    void UI_changeButtonUpdate();
+    void UI_license();
+    void UI_help();
 
     void UI_updateUI();
     void UI_setConfig();
-
-    void UI_setCellValue(int line, int column, int value);
-    void UI_clearBoard();
-    void UI_createCellsBoard(int startLine, int endLine, \
-                int startColumn, int endColumn);
     void UI_setBoard();
 
-    void UI_license();
-    void UI_help();
+    void UI_changeButtonUpdate();
+
+    void UI_clearBoard();
+    void UI_setCellValue(int line, int column, int value);
+    void UI_createCellsBoard(int startLine, int endLine, int startColumn, int endColumn);
+
+    void UI_resizeBoard(int lines, int columns);
+    void UI_newBoard();
+
+    void disableStartCell(int line, int column);
+    void disableEndCell(int line, int column);
+    void UI_changeCell(int,int);
 
     // read_write
     bool UI_ReadLabyrinthFile(QString);
@@ -68,14 +74,11 @@ private slots:
     void UI_SaveLabyrinth();
     // end read_write
 
-    void disableStartCell(int line, int column);
-    void disableEndCell(int line, int column);
-    void UI_changeType(int,int);
-
-    void UI_resizeBoard(int lines, int columns);
-    void UI_newBoard();
-
     void UI_newCostDiagonal();
+
+    void UI_EditCostDiagonal(bool value);
+
+    void start();
 
 private:
     Ui::MainWindow *ui;
@@ -101,7 +104,6 @@ private:
     Position startPosition, endPosition;
 
     Colors colors;
-
 };
 
 #endif // MAINWINDOW_H
