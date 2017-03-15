@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>925</width>
-    <height>698</height>
+    <width>811</width>
+    <height>592</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,27 +17,25 @@
    <property name="enabled">
     <bool>true</bool>
    </property>
-   <widget class="QGroupBox" name="gb_labyrinthConfig">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>14</y>
-      <width>251</width>
-      <height>441</height>
-     </rect>
-    </property>
-    <property name="title">
-     <string>Configuração do labirinto</string>
-    </property>
-    <layout class="QGridLayout" name="gridLayout_3">
-     <item row="0" column="0">
-      <widget class="QGroupBox" name="groupBox_2">
-       <property name="title">
-        <string>Dimensão e custo</string>
-       </property>
-       <layout class="QVBoxLayout" name="verticalLayout_3">
-        <item>
-         <layout class="QFormLayout" name="formLayout">
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <item>
+     <widget class="QGroupBox" name="gb_labyrinthConfig">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="title">
+       <string>Configuração do labirinto</string>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_4">
+       <item row="0" column="0">
+        <widget class="QGroupBox" name="groupBox_2">
+         <property name="title">
+          <string>Dimensão e custo</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout">
           <item row="0" column="0">
            <widget class="QLabel" name="lb_lines">
             <property name="text">
@@ -78,13 +76,6 @@
           <item row="3" column="1">
            <widget class="QDoubleSpinBox" name="sb_costVertical"/>
           </item>
-          <item row="4" column="1">
-           <widget class="QDoubleSpinBox" name="sb_costDiagonal">
-            <property name="singleStep">
-             <double>0.500000000000000</double>
-            </property>
-           </widget>
-          </item>
           <item row="4" column="0">
            <widget class="QLabel" name="lb_costDiagonal">
             <property name="text">
@@ -92,114 +83,133 @@
             </property>
            </widget>
           </item>
+          <item row="4" column="1">
+           <widget class="QDoubleSpinBox" name="sb_costDiagonal">
+            <property name="singleStep">
+             <double>0.500000000000000</double>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="0" colspan="2">
+           <widget class="QCheckBox" name="checkBox">
+            <property name="text">
+             <string>Custo diagonal manual</string>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="0">
+           <widget class="QPushButton" name="pb_newBoard">
+            <property name="text">
+             <string> Atualizar</string>
+            </property>
+           </widget>
+          </item>
          </layout>
-        </item>
-        <item>
-         <widget class="QPushButton" name="pb_newBoard">
-          <property name="text">
-           <string> Atualizar</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-     </item>
-     <item row="1" column="0">
-      <widget class="QGroupBox" name="gb_drawing">
-       <property name="enabled">
-        <bool>true</bool>
-       </property>
-       <property name="title">
-        <string>Desenho do labirinto</string>
-       </property>
-       <layout class="QGridLayout" name="gridLayout_2">
-        <item row="0" column="0">
-         <widget class="QRadioButton" name="rb_start">
-          <property name="text">
-           <string>Partida</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="0">
-         <widget class="QRadioButton" name="rb_wall">
-          <property name="text">
-           <string>Obstáculo</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0">
-         <widget class="QRadioButton" name="rb_end">
-          <property name="text">
-           <string>Chegada</string>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="0">
-         <widget class="QRadioButton" name="rb_clearCell">
-          <property name="text">
-           <string>Apagar posição</string>
-          </property>
-         </widget>
-        </item>
-        <item row="4" column="0">
-         <widget class="QPushButton" name="pb_clearBoard">
-          <property name="text">
-           <string> Apagar labirinto</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-     </item>
-    </layout>
-   </widget>
-   <widget class="QTableWidget" name="board">
-    <property name="geometry">
-     <rect>
-      <x>270</x>
-      <y>30</y>
-      <width>640</width>
-      <height>640</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="pb_start">
-    <property name="enabled">
-     <bool>true</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>30</x>
-      <y>470</y>
-      <width>211</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string> Start</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="lb_info">
-    <property name="geometry">
-     <rect>
-      <x>270</x>
-      <y>6</y>
-      <width>641</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-   </widget>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QGroupBox" name="gb_drawing">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
+         <property name="title">
+          <string>Desenho do labirinto</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_2">
+          <item row="3" column="0">
+           <widget class="QRadioButton" name="rb_clearCell">
+            <property name="text">
+             <string>Apagar posição</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QRadioButton" name="rb_end">
+            <property name="text">
+             <string>Chegada</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QRadioButton" name="rb_start">
+            <property name="text">
+             <string>Partida</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QRadioButton" name="rb_wall">
+            <property name="text">
+             <string>Obstáculo</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0">
+           <widget class="QPushButton" name="pb_clearBoard">
+            <property name="text">
+             <string> Apagar labirinto</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QPushButton" name="pb_start">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>205</width>
+           <height>40</height>
+          </size>
+         </property>
+         <property name="text">
+          <string> Start</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
+     <widget class="QTableWidget" name="board">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>532</width>
+        <height>532</height>
+       </size>
+      </property>
+      <attribute name="horizontalHeaderDefaultSectionSize">
+       <number>100</number>
+      </attribute>
+     </widget>
+    </item>
+   </layout>
+   <zorder>gb_labyrinthConfig</zorder>
+   <zorder>board</zorder>
+   <zorder>verticalSpacer</zorder>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>925</width>
-     <height>22</height>
+     <width>811</width>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuAbout">

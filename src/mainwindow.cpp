@@ -50,6 +50,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->pb_newBoard,   SIGNAL(clicked(bool)), this, SLOT(UI_newBoard()));
 
     connect(ui->board, SIGNAL(cellClicked(int,int)), this, SLOT(UI_changeType(int,int)));
+    connect(ui->board,SIGNAL( currentRowChanged(QModelIndex,QModelIndex ) ), this, SLOT(UI_changeType(int,int)));
 
     connect(ui->sb_costHorizontal, SIGNAL(valueChanged(double)), this, SLOT(UI_newCostDiagonal()));
     connect(ui->sb_costVertical,   SIGNAL(valueChanged(double)), this, SLOT(UI_newCostDiagonal()));
@@ -132,8 +133,7 @@ void MainWindow::UI_setCellValue(int line, int column, int value)
             ui->board->item(this->startPosition.line, this->startPosition.column)\
                     ->setBackgroundColor(this->colors.free);
 
-            ui->board->item(this->startPosition.line, this->startPosition.column)->setTextColor( \
-                        ui->board->item(this->endPosition.line,this->endPosition.column)->backgroundColor() );
+            ui->board->item(this->startPosition.line, this->startPosition.column)->setTextColor( this->colors.free );
         }
 
         disableEndCell(line, column);
@@ -174,7 +174,11 @@ void MainWindow::UI_setCellValue(int line, int column, int value)
         disableEndCell(line, column);
     }
 
-    ui->board->item(line,column)->setTextColor( ui->board->item(line,column)->backgroundColor() );
+    //ui->board->item(line,column)->setTextColor( ui->board->item(line,column)->backgroundColor() );
+
+    //ui->board->item(line,column)->setData(1,-1);
+
+    //ui->board->item(line,column)->setIcon(QIcon("../icons/colors/" + colors.wall + ".png"));
 }
 
 void MainWindow::UI_clearBoard()
@@ -192,7 +196,7 @@ void MainWindow::UI_createCellsBoard(int startLine, int endLine, \
     for(int l=startLine; l<endLine; l++) {
         for(int c=startColumn; c<endColumn; c++) {
             ui->board->setItem(l, c, new QTableWidgetItem(0));
-            //ui->board->setItem(l, c, new QTableWidgetItem(1));
+            ui->board->setItem(l, c, new QTableWidgetItem(1));
             //ui->board->item(l, c)->setData(0,CELL_FREE);
             UI_setCellValue(l, c, CELL_FREE);
             //ui->board->item(l, c)->setData(1,0);
@@ -208,17 +212,23 @@ void MainWindow::UI_setBoard()
     ui->board->verticalHeader()->setVisible(false);
     ui->board->horizontalHeader()->setVisible(false);
 
+
+
+    //ui->board->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    //ui->board->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
     ui->board->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    //ui->board->setEditTriggers(QAbstractItemView::);
 
     ui->board->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     ui->board->verticalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
     ui->board->setGridStyle(Qt::DashLine);
     //ui->board->setShowGrid(false);
-    ui->board->setSelectionMode(QAbstractItemView::NoSelection);
+    //ui->board->setSelectionMode(QAbstractItemView::NoSelection);
 
-    // ui->board->horizontalHeader()->setStretchLastSection( true );
-     //ui->board->verticalHeader()->setStretchLastSection( true );
+    ui->board->horizontalHeader()->setStretchLastSection( true );
+    ui->board->verticalHeader()->setStretchLastSection( true );
 
     UI_createCellsBoard(0, this->lines, 0, this->columns);
 }
@@ -450,8 +460,8 @@ void MainWindow::disableEndCell(int line, int column)
 
 void MainWindow::UI_changeType(int line, int column)
 {
-    if(ui->rb_start->isChecked() && (this->startPosition.line != line \
-            || this->startPosition.column != column) )
+    if(ui->rb_start->isChecked() && ((this->startPosition.line != line \
+            || this->startPosition.column != column) || this->startPosition.active == false) )
     {
         UI_setCellValue(line,column, CELL_START);
     }

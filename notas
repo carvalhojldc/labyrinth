@@ -1,9 +1,7 @@
 Marximizar board junto com a tela
 
-Deixar o board limpo, sem os zeros
-
-Certificar de anular o startPosition e endPosition no resize do board
-
-Salvar nova matrix de board em txt
+Deixar o board limpo, sem os zeros (melhorar)
 
 Deixar o board com quadrados e lados iguais
+
+Ajustar interface (calculo da diagonal)
