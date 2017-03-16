@@ -169,17 +169,15 @@ void MainWindow::UI_setBoard()
     ui->board->setRowCount(this->lines);
     ui->board->setColumnCount(this->columns);
 
-    ui->board->verticalHeader()->setVisible(false);
-    ui->board->horizontalHeader()->setVisible(false);
-
-    ui->board->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    //ui->board->verticalHeader()->setVisible(false);
+    //ui->board->horizontalHeader()->setVisible(false);
 
     ui->board->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     ui->board->verticalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
-    ui->board->setGridStyle(Qt::DashLine);
+    //ui->board->setGridStyle(Qt::DashLine);
     //ui->board->setShowGrid(false);
-    ui->board->setSelectionMode(QAbstractItemView::NoSelection);
+    //ui->board->setSelectionMode(QAbstractItemView::NoSelection);
 
     //ui->board->horizontalHeader()->setStretchLastSection( true );
     //ui->board->verticalHeader()->setStretchLastSection( true );

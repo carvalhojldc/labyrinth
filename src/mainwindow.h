@@ -18,6 +18,8 @@
 #define CELL_START 2
 #define CELL_END   3
 
+#define MAX_SIZE 1000
+
 struct Colors
 {
     const QString start = "green";
