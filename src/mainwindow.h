@@ -6,8 +6,11 @@
 #include <QMessageBox>
 #include <QTableWidget>
 #include <QStandardPaths>
+#include <QtMath>
 
 #include <QDebug>
+
+#include "matrix.h"
 
 #define DEBUG
 #define DEBUG_IMPORT_LABYRINTH
@@ -83,14 +86,14 @@ private slots:
     void start();
 
 private:
+    float getDiagonal(float a, float b);
+
+    void a_star();
+
+private:
     Ui::MainWindow *ui;
 
     QString programTitle = "CJL Labyrinth - A*";
-
-    void allocateLabyrinth();
-    void deleteLabyrinth();
-
-    float getDiagonal(float a, float b);
 
     // for import/save labyrinth file
     QString userName;
@@ -101,7 +104,7 @@ private:
     // labyrinth configuration
     int lines, columns;
     float costHorizontal, costVertical, costDiagonal;
-    int **labyrinth;
+    Matrix *labyrinth;
 
     Position startPosition, endPosition;
 

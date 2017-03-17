@@ -224,7 +224,8 @@ DIST          = ../notas \
 		/opt/Qt5.8.0/5.8/gcc_64/mkspecs/features/exceptions.prf \
 		/opt/Qt5.8.0/5.8/gcc_64/mkspecs/features/yacc.prf \
 		/opt/Qt5.8.0/5.8/gcc_64/mkspecs/features/lex.prf \
-		../src/labyrinth.pro ../src/mainwindow.h ../src/main.cpp \
+		../src/labyrinth.pro ../src/mainwindow.h \
+		../src/matrix.h ../src/main.cpp \
 		../src/mainwindow.cpp
 QMAKE_TARGET  = labyrinth
 DESTDIR       = 
@@ -601,7 +602,7 @@ distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents /opt/Qt5.8.0/5.8/gcc_64/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents ../src/mainwindow.h $(DISTDIR)/
+	$(COPY_FILE) --parents ../src/mainwindow.h ../src/matrix.h $(DISTDIR)/
 	$(COPY_FILE) --parents ../src/main.cpp ../src/mainwindow.cpp $(DISTDIR)/
 	$(COPY_FILE) --parents ../src/mainwindow.ui $(DISTDIR)/
 
@@ -769,7 +770,10 @@ moc_mainwindow.cpp: /opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/QMainWindow \
 		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/qrubberband.h \
 		/opt/Qt5.8.0/5.8/gcc_64/include/QtCore/QStandardPaths \
 		/opt/Qt5.8.0/5.8/gcc_64/include/QtCore/qstandardpaths.h \
+		/opt/Qt5.8.0/5.8/gcc_64/include/QtCore/QtMath \
+		/opt/Qt5.8.0/5.8/gcc_64/include/QtCore/qmath.h \
 		/opt/Qt5.8.0/5.8/gcc_64/include/QtCore/QDebug \
+		../src/matrix.h \
 		../src/mainwindow.h \
 		moc_predefs.h \
 		/opt/Qt5.8.0/5.8/gcc_64/bin/moc
@@ -926,7 +930,10 @@ main.o: ../src/main.cpp ../src/mainwindow.h \
 		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/qrubberband.h \
 		/opt/Qt5.8.0/5.8/gcc_64/include/QtCore/QStandardPaths \
 		/opt/Qt5.8.0/5.8/gcc_64/include/QtCore/qstandardpaths.h \
+		/opt/Qt5.8.0/5.8/gcc_64/include/QtCore/QtMath \
+		/opt/Qt5.8.0/5.8/gcc_64/include/QtCore/qmath.h \
 		/opt/Qt5.8.0/5.8/gcc_64/include/QtCore/QDebug \
+		../src/matrix.h \
 		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/QApplication \
 		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/qapplication.h \
 		/opt/Qt5.8.0/5.8/gcc_64/include/QtCore/qcoreapplication.h \
@@ -1068,8 +1075,54 @@ mainwindow.o: ../src/mainwindow.cpp ../src/mainwindow.h \
 		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/qrubberband.h \
 		/opt/Qt5.8.0/5.8/gcc_64/include/QtCore/QStandardPaths \
 		/opt/Qt5.8.0/5.8/gcc_64/include/QtCore/qstandardpaths.h \
+		/opt/Qt5.8.0/5.8/gcc_64/include/QtCore/QtMath \
+		/opt/Qt5.8.0/5.8/gcc_64/include/QtCore/qmath.h \
 		/opt/Qt5.8.0/5.8/gcc_64/include/QtCore/QDebug \
-		ui_mainwindow.h
+		../src/matrix.h \
+		ui_mainwindow.h \
+		/opt/Qt5.8.0/5.8/gcc_64/include/QtCore/QVariant \
+		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/QAction \
+		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/qaction.h \
+		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/qactiongroup.h \
+		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/QApplication \
+		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/qapplication.h \
+		/opt/Qt5.8.0/5.8/gcc_64/include/QtCore/qcoreapplication.h \
+		/opt/Qt5.8.0/5.8/gcc_64/include/QtCore/qeventloop.h \
+		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/qdesktopwidget.h \
+		/opt/Qt5.8.0/5.8/gcc_64/include/QtGui/qguiapplication.h \
+		/opt/Qt5.8.0/5.8/gcc_64/include/QtGui/qinputmethod.h \
+		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/QButtonGroup \
+		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/qbuttongroup.h \
+		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/QCheckBox \
+		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/qcheckbox.h \
+		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/qabstractbutton.h \
+		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/QDoubleSpinBox \
+		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/qspinbox.h \
+		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/QFrame \
+		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/QGridLayout \
+		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/qgridlayout.h \
+		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/qlayout.h \
+		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/qlayoutitem.h \
+		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/qboxlayout.h \
+		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/QGroupBox \
+		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/qgroupbox.h \
+		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/QHeaderView \
+		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/qheaderview.h \
+		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/QLabel \
+		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/qlabel.h \
+		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/QMenu \
+		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/qmenu.h \
+		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/QMenuBar \
+		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/qmenubar.h \
+		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/QPushButton \
+		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/qpushbutton.h \
+		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/QRadioButton \
+		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/qradiobutton.h \
+		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/QSpacerItem \
+		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/QSpinBox \
+		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/QStatusBar \
+		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/qstatusbar.h \
+		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/QWidget
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o mainwindow.o ../src/mainwindow.cpp
 
 moc_mainwindow.o: moc_mainwindow.cpp 
