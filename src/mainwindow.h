@@ -8,27 +8,16 @@
 #include <QStandardPaths>
 #include <QtMath>
 
+#include "labyrinth.h"
+
 #include <QDebug>
-
-#include "matrix.h"
-
-#define DEBUG
-#define DEBUG_IMPORT_LABYRINTH
-#define DEBUG_READ_LABYRINTH
-
-#define CELL_FREE  0
-#define CELL_WALL  1
-#define CELL_START 2
-#define CELL_END   3
-
-#define MAX_SIZE 1000
 
 struct Colors
 {
     const QString start = "green";
-    const QString end = "blue";
-    const QString wall = "black";
-    const QString free = "white";
+    const QString end   = "blue";
+    const QString wall  = "black";
+    const QString free  = "white";
 };
 
 struct Position
@@ -88,12 +77,15 @@ private slots:
 private:
     float getDiagonal(float a, float b);
 
+    float euclideanDistance(int line, int column);
     void a_star();
 
 private:
     Ui::MainWindow *ui;
 
-    QString programTitle = "CJL Labyrinth - A*";
+    //File *acessFile;
+
+    QString program = "CJL Labyrinth - A* v0.2.1 ";
 
     // for import/save labyrinth file
     QString userName;
@@ -101,14 +93,11 @@ private:
     QString importLabyrinthFile;
     QString saveLabyrinthFile;
 
-    // labyrinth configuration
-    int lines, columns;
-    float costHorizontal, costVertical, costDiagonal;
-    Matrix *labyrinth;
-
     Position startPosition, endPosition;
 
     Colors colors;
+
+    Labyrinth* labyrinth;
 };
 
 #endif // MAINWINDOW_H

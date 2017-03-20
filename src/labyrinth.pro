@@ -24,10 +24,14 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp
+        mainwindow.cpp \
+    map.cpp \
+    labyrinth.cpp
 
 HEADERS  += mainwindow.h \
-    matrix.h
+    map.h \
+    file.h \
+    labyrinth.h
 
 FORMS    += mainwindow.ui
 
