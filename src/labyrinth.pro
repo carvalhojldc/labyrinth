@@ -31,7 +31,10 @@ SOURCES += main.cpp\
 HEADERS  += mainwindow.h \
     map.h \
     file.h \
-    labyrinth.h
+    labyrinth.h \
+    node.h \
+    position.h \
+    astar.h
 
 FORMS    += mainwindow.ui
 
