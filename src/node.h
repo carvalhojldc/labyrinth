@@ -51,15 +51,15 @@ public:
         return (this->position == node.position);
     }
 
+    bool operator < (Node* node) {
+        return this->getHeuristic() < node->getHeuristic();
+    }
+
     void operator = (Node node) {
         this->parent = node.getParent();
         this->position = node.position;
         this->g = node.getG();
         this->h = node.getH();
-    }
-
-    bool operator < (Node* node) {
-        return this->getHeuristic() < node->getHeuristic();
     }
 };
 

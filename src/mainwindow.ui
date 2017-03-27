@@ -255,7 +255,7 @@
          <enum>QAbstractItemView::NoSelection</enum>
         </property>
         <attribute name="horizontalHeaderVisible">
-         <bool>false</bool>
+         <bool>true</bool>
         </attribute>
         <attribute name="horizontalHeaderDefaultSectionSize">
          <number>100</number>
@@ -264,7 +264,7 @@
          <number>20</number>
         </attribute>
         <attribute name="verticalHeaderVisible">
-         <bool>false</bool>
+         <bool>true</bool>
         </attribute>
         <attribute name="verticalHeaderMinimumSectionSize">
          <number>20</number>
@@ -281,7 +281,7 @@
      <x>0</x>
      <y>0</y>
      <width>915</width>
-     <height>23</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuAbout">

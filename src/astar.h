@@ -17,8 +17,8 @@ using std::list;
 class AStar {
 private:
     Labyrinth *labyrinth;
-    Position startPosition, endPosition;
-    Node *start, *end;
+
+    Node *startNode, *endNode;
 
     list<Node*> openPath, closedPath;
 
@@ -26,19 +26,35 @@ private:
 
     bool comp(Node* a, Node* b) { return a<b; }
 
+    bool inList(list<Node*> l, Position position) {
+        list<Node*>::iterator it;
+        Node *temp;
+        for(it=l.begin(); it!=l.end(); it++) {
+            temp = *it;
+            if(temp->position == position) {
+            //    qDebug() << ">>>>>>>>>>>>> ta fechado" << temp->position.getX() << " " << temp->position.getY();
+                return true;
+            }
+        }
+      //  qDebug() << ">>>>>>>>>>>>> ta " << temp->position.getX() << " " << temp->position.getY();
+     //   Node* a = l.back();
+//        qDebug() << ">>>>>>>>>>>>> ta " << a->position.getX() << " " << a->position.getY();
+        return false;
+    }
+
     float getH(Position position, int type) {
         float distance = 0;
 
         if(type == MANHATTAN_DISTANCE) {
             // manhattan: d(a,b) = |Xb−Xa| + |Yb−Ya|.
-            float dx = abs(position.getX() - endPosition.getX());
-            float dy = abs(position.getY() - endPosition.getY());
+            float dx = abs(position.getX() - endNode->position.getX());
+            float dy = abs(position.getY() - endNode->position.getY());
 
             distance = dx + dy;
         } else {
             // euclidian: d(a,b) = sqrt( (Xa−Xb)^2 + (Ya−Yb)^2 ).
-            float dx = pow(position.getX() - endPosition.getX(), 2);
-            float dy = pow(position.getY() - endPosition.getY(), 2);
+            float dx = pow(position.getX() - endNode->position.getX(), 2);
+            float dy = pow(position.getY() - endNode->position.getY(), 2);
 
             distance = sqrt(dx+dy);
         }
@@ -69,22 +85,26 @@ private:
         return false;
     }
 
-    void printList(list<Node*> l) {
-        list<Node*>::iterator findIter;
-        qDebug() << "list";
-        for(findIter=l.begin(); findIter!=l.end(); findIter++) {
-            Node* temp = *findIter;
+    Node* getBest(list<Node*> l) {
+        list<Node*>::iterator it;
+        Node *best = l.front();
+        Node *aux;
 
-            qDebug() << "Heuristic(): " << temp->getHeuristic();
+        for(it=l.begin(); it!=l.end(); it++) {
+            aux = *it;
+            if(aux < best) {
+                best = aux;
+            }
         }
+
+        return best;
     }
 
-    list<Node*> getNeighbors(Node* node) {
+    bool getNeighbors(Node* node) {
 
-        list<Node*>::iterator findIter;
-        list<Node*> myNeighbors;
-
-        Node* theBest;
+        list<Node*>::iterator it;
+        Node* theBest = nullptr;
+        Node *temp = nullptr;
 
         float g, h;
 
@@ -108,31 +128,46 @@ private:
                 endColumn = myY : endColumn = myY+1;
         }
 
+        qDebug() << "l" << endLine << "c" << endColumn;
+        //if(endLine<1 || endColumn<1 || (endLine==1 && endColumn==1)) return false;
+
+        qDebug() << "#####################################";
         qDebug() << " - startLine: " << startLine << " endLine: " << endLine;
         qDebug() << " - startColumn: " << startColumn << " endColumn:  " << endColumn;
-
-        std::min_element(closedPath.begin(), closedPath.end(), comp);
-
-        qDebug() << "theBest" << theBest->getH();
 
         for(int line=startLine; line<=endLine; line++) {
             for(int column=startColumn; column<=endColumn; column++) {
                 qDebug() << "# search = line: " << line << " column: " << column;
                 Position newNeighbor(line,column);
 
-                if( isFree(node, newNeighbor) )
+                if( isFree(node, newNeighbor) && !inList(closedPath, newNeighbor) )
                 {
-                    qDebug() << " neighbor = x:" << newNeighbor.getX() << " y:" << newNeighbor.getY();
+                    //qDebug() << " neighbor = x:" << newNeighbor.getX() << " y:" << newNeighbor.getY();
                     g = getG(newNeighbor, node);
                     h = getH(newNeighbor, EUCLIDEAN_DISTANCE);
 
                     Node *neighbor = new Node(node, newNeighbor, g, h);
-                    findIter = find(openPath.begin(), openPath.end(), neighbor);
 
-                    if(findIter == openPath.end()) {
+                    //qDebug() << "    neighbor: x" << neighbor->position.getX() << " y" << neighbor->position.getY() << "  heuristic" << neighbor->getHeuristic();
+
+                    if(theBest == nullptr) theBest = neighbor;
+                    else if(neighbor->getHeuristic() < theBest->getHeuristic())
+                        theBest = neighbor;
+
+
+                    //qDebug() << "    thebest: x" << theBest->position.getX() << " y" << theBest->position.getX() << "  heuristic" << theBest->getHeuristic();
+
+
+                    for(it=openPath.begin(); it!=openPath.end(); it++) {
+                        temp = *it;
+                        if(temp->position == neighbor->position)
+                            break;
+                    }
+
+                    if(it == openPath.end()) {
                         openPath.push_back(neighbor);
                     } else {
-                        Node *temp = *findIter;
+                        qDebug() << "++++++\n\n\n\nachou " << neighbor->position.getX() << neighbor->position.getY();
                         temp->setParent(node);
                         temp->setG(g);
                     }
@@ -140,14 +175,23 @@ private:
             }
         }
 
-        qDebug() << "openPath.size(): " << openPath.size();
+        //qDebug() << "thebest: x" << theBest->position.getX() << " y" << theBest->position.getX() << "  heuristic" << theBest->getHeuristic();
+        if(theBest != nullptr) {
+            closedPath.push_back(theBest);
+            qDebug() << "add" << theBest->position.getX() << theBest->position.getY();
+            openPath.remove(theBest);
+        } else if(openPath.size() != 0) {
+            qDebug() << "buscar proximo aberto"  ;
+            return false;
+
+            getNeighbors( getBest(openPath) );
+        } else
+            return false;
 
 
-        //qsort(openPath.begin(), openPath.end(), comp);
-        //qsort(openPath.begin(), openPath.size(), sizeof(Node*), comp);
-        printList(openPath);
+        if(theBest->position == endNode->position) return true;
 
-        return myNeighbors;
+        getNeighbors(closedPath.back());
     }
 
 public:
@@ -158,26 +202,32 @@ public:
 
     AStar(Labyrinth* labyrinth) {
         this->labyrinth = labyrinth;
-        startPosition = labyrinth->map->getStartPosition();
-        endPosition = labyrinth->map->getEndPosition();
 
+        startNode = new Node(nullptr, labyrinth->map->getStartPosition());
+        endNode   = new Node(nullptr, labyrinth->map->getEndPosition());
 
-        start = new Node(nullptr, startPosition, 0, getH(startPosition, EUCLIDEAN_DISTANCE));
-        end   = new Node(nullptr, endPosition);
+        qDebug() << "startNode " << startNode->position.getX() << " " << startNode->position.getY();
+        qDebug() << "endNode " << endNode->position.getX() << " " << endNode->position.getY();
     }
 
-    void searchPath() {
-        closedPath.push_back(start);
+    list<Node*> searchPath() {
+        closedPath.push_back(startNode);
 
-        qDebug() << "startPosition= x:" << startPosition.getX() << " y:" << startPosition.getY();
-        list<Node*> temp = getNeighbors(start);
+        getNeighbors(closedPath.back());
 
-        qDebug() << "my heighbors: " << temp.size();
+        list<Node*>::iterator it;
 
-        //list<Node*>::it iterator;
-
-        //for(it = temp.begin(); it != temp.end(); it++)
-//            qDebug() << it.
+        qDebug() <<"closedPath.size(): " << closedPath.size();
+        for(it=closedPath.begin(); it!=closedPath.end(); it++) {
+            Node* temp = *it;
+            qDebug() << temp->position.getX() << " " << temp->position.getY();
+        }
+        qDebug() <<"openPath.size(): " << openPath.size();
+        for(it=openPath.begin(); it!=openPath.end(); it++) {
+            Node* temp = *it;
+            qDebug() << temp->position.getX() << " " << temp->position.getY();
+        }
+        return closedPath;
     }
 };
 

@@ -533,7 +533,16 @@ void MainWindow::start()
 
     AStar *a = new AStar(labyrinth);
 
-    a->searchPath();
+   // a->searchPath();
+
+    list<Node*> teste = a->searchPath();
+
+    list<Node*>::iterator it;
+    for(it=teste.begin(); it!=teste.end(); it++) {
+        Node* temp = *it;
+        ui->board->item(temp->position.getX(), temp->position.getY())\
+                ->setBackgroundColor(Qt::yellow);
+    }
     qDebug() << "run";
 }
 
@@ -552,7 +561,7 @@ void MainWindow::a_star()
 
     AStar *a = new AStar(labyrinth);
 
-    a->searchPath();
+
     // Distance measurement
     //float hl;
 
