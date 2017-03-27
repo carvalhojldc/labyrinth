@@ -1,13 +1,34 @@
 #ifndef MATRIX_H
 #define MATRIX_H
 
+#include <QTableWidget>
 #include <cstdlib>
+#include "position.h"
+
+#include <QDebug>
+
+struct Colors {
+    const QString start = "green";
+    const QString end   = "blue";
+    const QString wall  = "black";
+    const QString free  = "white";
+};
+
+#define CELL_FREE  0
+#define CELL_WALL  1
+#define CELL_START 2
+#define CELL_END   3
 
 class Map {
 
 private:
 	int lines, columns;
     int **matrix;
+    QTableWidget *board;
+    Colors colors;
+
+    Position startPosition, \
+             endPosition;
 
     int* allocColumns(int size);
 
@@ -42,6 +63,11 @@ public:
     int getNColumns(void) const;
 
     void setNewSize(int newLines, int newColumns);
+
+    void setBoard(QTableWidget *board);
+
+    Position getStartPosition();
+    Position getEndPosition();
 };
 
 #endif // MATRIX_H

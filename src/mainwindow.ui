@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>915</width>
-    <height>664</height>
+    <height>666</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -177,7 +177,7 @@
               <item row="1" column="1">
                <widget class="QRadioButton" name="rb_clearCell">
                 <property name="text">
-                 <string>Apagar posição</string>
+                 <string>Apagador</string>
                 </property>
                </widget>
               </item>
@@ -281,7 +281,7 @@
      <x>0</x>
      <y>0</y>
      <width>915</width>
-     <height>20</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuAbout">

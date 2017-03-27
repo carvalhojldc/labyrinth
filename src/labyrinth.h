@@ -3,11 +3,6 @@
 
 #include "map.h"
 
-#define CELL_FREE  0
-#define CELL_WALL  1
-#define CELL_START 2
-#define CELL_END   3
-
 class Labyrinth {
 
 private:

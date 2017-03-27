@@ -15,17 +15,15 @@ public:
         setPosition(x, y);
     }
 
-    ~Position() {
-
-    }
+    ~Position() { }
 
     void setPosition(int x, int y) {
         this->x = x;
         this->y = y;
     }
 
-    int getX() const { return x; }
-    int getY() const { return y; }
+    inline int getX() const { return x; }
+    inline int getY() const { return y; }
 
     void operator = (const Position p) {
         x = p.getX();
@@ -34,6 +32,12 @@ public:
 
     bool operator == (const Position p) {
         if(x == p.getX() && y == p.getY())
+            return true;
+        return false;
+    }
+
+    bool operator != (const Position p) {
+        if(x != p.getX() || y != p.getY())
             return true;
         return false;
     }

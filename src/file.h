@@ -1,16 +1,59 @@
 #ifndef FILE_H
 #define FILE_H
 
-#include <QDebug>
+#include <QFile>
 #include "labyrinth.h"
+
+#include <QDebug>
 
 class File {
 
 public:
-    File() {
-    }
+    File() { }
 
-    ~File() {
+    ~File() { }
+
+    bool writeLabyrinthFile(Labyrinth* labyrinth, QString saveLabyrinthFile) {
+        QFile labyrinthFile(saveLabyrinthFile);
+
+        if( ! labyrinthFile.open(QIODevice::WriteOnly) ) {
+            QMessageBox::critical(
+                0,
+                "Error: create labyrinth",
+                labyrinthFile.errorString());
+            return false;
+        }
+
+        QTextStream out( &labyrinthFile );
+
+        int lines = labyrinth->map->getNLines();
+        int columns = labyrinth->map->getNColumns();
+
+        out << lines << ' '
+            << columns << ' '
+            << labyrinth->getCostHorizontal() << ' '
+            << labyrinth->getCostVertical() << endl;
+
+
+        for(int l = 0; l<lines; l++) {
+            for(int c = 0; c<columns; c++) {
+                out << labyrinth->map->get(l,c);
+
+                if(c != columns-1)
+                    out << ' ';
+
+            }
+            out << endl;
+        }
+
+        labyrinthFile.close();
+
+        QMessageBox::information(
+                    0,
+                    "Success",
+                    "Labyrinth saved");
+
+        return true;
     }
 
     Labyrinth* readLabyrinthFile(QString file) {
@@ -81,6 +124,8 @@ public:
         // end all_validataion
         // ---------------------------
 
+        qDebug() << "custos " << costHorizontal << " " << costVertical;
+
         map = new Map(numberLines, numberColumns);
 
         for(int line=0; line<numberLines; line++) {
@@ -89,7 +134,11 @@ public:
             }
         }
 
-        labyrinth = new Labyrinth(map, costHorizontal, costVertical, 0);
+        qDebug() << "b" << map->getNLines();
+        labyrinth = new Labyrinth(map, 0, 0, 0);
+
+        qDebug() << "c" << labyrinth->getCostDiagonal();
+        qDebug() << "a" << labyrinth->map->getNLines();
 
         return labyrinth;
     }

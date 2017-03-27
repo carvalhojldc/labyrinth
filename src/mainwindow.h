@@ -9,29 +9,16 @@
 #include <QtMath>
 
 #include "labyrinth.h"
+#include "astar.h"
+#include "file.h"
 
 #include <QDebug>
-
-struct Colors
-{
-    const QString start = "green";
-    const QString end   = "blue";
-    const QString wall  = "black";
-    const QString free  = "white";
-};
-
-struct Position
-{
-    int line;
-    int column;
-    bool active;
-};
 
 namespace Ui {
 class MainWindow;
 }
 
-class MainWindow : public QMainWindow
+class MainWindow : public QMainWindow, public File
 {
     Q_OBJECT
 
@@ -94,6 +81,7 @@ private:
     QString saveLabyrinthFile;
 
     Position startPosition, endPosition;
+    bool statusEndPosition, statusStartPosition;
 
     Colors colors;
 

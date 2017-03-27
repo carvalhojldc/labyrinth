@@ -34,7 +34,7 @@ Labyrinth::~Labyrinth()
 
 void Labyrinth::setMap(Map* map) {
     delete map;
-    map = NULL;
+    map = nullptr;
     this->map = map;
 }
 

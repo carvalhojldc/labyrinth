@@ -38,7 +38,7 @@ void Map::zeroColumns(int* Line, int start, int end) {
 }
 
 Map::Map() {
-    matrix  = NULL;
+    matrix  = nullptr;
     lines   = 0;
     columns = 0;
 }
@@ -68,7 +68,38 @@ bool Map::set(int line, int column, int value) {
     if(validatePosition(line,column) == false)
         return false;
 
+    /*QString color;
+
+    switch (value) {
+    case CELL_END:
+        color = colors.end;
+        break;
+    case CELL_FREE:
+        color = colors.free;
+        break;
+    case CELL_START:
+        color = colors.start;
+        break;
+    case CELL_WALL:
+        color = colors.wall;
+        break;
+    }*/
+
     matrix[line][column] = value;
+    //board->item(line,column)->setBackgroundColor(colors.wall);
+
+    if(value == CELL_START) {
+        startPosition.setPosition(line, column);
+    } else if(value == CELL_END) {
+        endPosition.setPosition(line, column);
+    } else {
+        Position temp(line, column);
+
+        if(temp == startPosition)
+            startPosition.setPosition(-1,-1);
+        else if(temp == endPosition)
+            endPosition.setPosition(-1,-1);
+    }
 
     return true;
 }
@@ -122,3 +153,16 @@ void Map::setNewSize(int lines, int columns) {
         this->columns = columns;
     }
 }
+
+void Map::setBoard(QTableWidget *board) {
+    this->board = board;
+
+    qDebug() << this->board->item(0,0)->text();
+}
+
+Position Map::getStartPosition()
+{ return startPosition; }
+
+Position Map::getEndPosition()
+{ return endPosition; }
+

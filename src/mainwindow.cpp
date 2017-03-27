@@ -15,13 +15,11 @@ MainWindow::MainWindow(QWidget *parent) :
         this->userName = qgetenv("USERNAME");
     this->userDir = "/home/" + this->userName;
 
-    startPosition.line   = 0;
-    startPosition.column = 0;
-    startPosition.active = false;
+    startPosition.setPosition(0,0);
+    statusStartPosition = false;
 
-    endPosition.line   = 1;
-    endPosition.column = 1;
-    endPosition.active = false;
+    endPosition.setPosition(0,0);
+    statusEndPosition = false;
 
     labyrinth = new Labyrinth(10, 10, 1, 2, getDiagonal(1, 2));
 
@@ -62,12 +60,12 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // end UI
     // --------------
+
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
-
     delete labyrinth;
 }
 
@@ -182,35 +180,33 @@ void MainWindow::UI_setCellValue(int line, int column, int value)
             ui->board->item(line,column)->setBackgroundColor(colors.start);
             labyrinth->map->set(line, column, CELL_START);
 
-            if(startPosition.active) {
-                ui->board->item(startPosition.line, startPosition.column)\
+            if(statusStartPosition) {
+                ui->board->item(startPosition.getX(), startPosition.getY())\
                         ->setBackgroundColor(colors.free);
 
-                labyrinth->map->set(startPosition.line, startPosition.column, CELL_FREE);
+                labyrinth->map->set(startPosition.getX(), startPosition.getY(), CELL_FREE);
             }
 
             disableEndCell(line, column);
 
-            startPosition.line   = line;
-            startPosition.column = column;
-            startPosition.active = true;
+            startPosition.setPosition(line,column);
+            statusStartPosition = true;
             break;
 
         case CELL_END:
             ui->board->item(line,column)->setBackgroundColor(colors.end);
             labyrinth->map->set(line, column, CELL_END);
 
-            if(endPosition.active) {
-                ui->board->item(endPosition.line, endPosition.column)\
+            if(statusEndPosition) {
+                ui->board->item(endPosition.getX(), endPosition.getY())\
                         ->setBackgroundColor(colors.free);
 
-                labyrinth->map->set(endPosition.line, endPosition.column, CELL_FREE);
+                labyrinth->map->set(endPosition.getX(), endPosition.getY(), CELL_FREE);
             }
             disableStartCell(line, column);
 
-            endPosition.line   = line;
-            endPosition.column = column;
-            endPosition.active = true;
+            endPosition.setPosition(line, column);
+            statusEndPosition = true;
             break;
 
         case CELL_FREE:
@@ -256,10 +252,10 @@ void MainWindow::UI_resizeBoard(int lines, int columns)
         if(lines > oldLines)
             UI_createCellsBoard(oldLines, lines, 0, oldColumns);
 
-        if(startPosition.line > lines)
-            startPosition.active = false;
-        else if(endPosition.line > lines)
-            endPosition.active = false;
+        if(startPosition.getX() > lines)
+            statusStartPosition = false;
+        else if(endPosition.getX() > lines)
+            statusEndPosition = false;
     }
 
     if(columns != oldColumns) {
@@ -269,10 +265,10 @@ void MainWindow::UI_resizeBoard(int lines, int columns)
         if(columns > oldColumns)
             UI_createCellsBoard(0, oldLines, oldColumns, columns);
 
-        if(startPosition.column > columns)
-            startPosition.active = false;
-        else if(endPosition.column > columns)
-            endPosition.active = false;
+        if(startPosition.getY() > columns)
+            statusStartPosition = false;
+        else if(endPosition.getY() > columns)
+            statusEndPosition = false;
     }
 }
 
@@ -290,23 +286,23 @@ void MainWindow::UI_newBoard()
 
 void MainWindow::disableStartCell(int line, int column)
 {
-    if(line == startPosition.line && column == startPosition.column)
-        startPosition.active = false;
+    if(line == startPosition.getX() && column == startPosition.getY())
+        statusStartPosition = false;
 }
 
 void MainWindow::disableEndCell(int line, int column)
 {
-    if(line == endPosition.line && column == endPosition.column)
-        endPosition.active = false;
+    if(line == endPosition.getX() && column == endPosition.getY())
+        statusEndPosition = false;
 }
 
 void MainWindow::UI_changeCell(int line, int column)
 {
-    if(ui->rb_start->isChecked() && ((this->startPosition.line != line \
-            || this->startPosition.column != column) || this->startPosition.active == false) )
+    if(ui->rb_start->isChecked() && ((startPosition.getX() != line \
+            || startPosition.getY() != column) || statusStartPosition == false) )
         UI_setCellValue(line,column, CELL_START);
-    else if(ui->rb_end->isChecked() && (this->endPosition.line != line \
-            || this->endPosition.column != column) )
+    else if(ui->rb_end->isChecked() && ((endPosition.getX() != line \
+            || endPosition.getY() != column) || statusEndPosition == false ) )
         UI_setCellValue(line, column, CELL_END);
     else if(ui->rb_wall->isChecked())
         UI_setCellValue(line, column, CELL_WALL);
@@ -415,12 +411,28 @@ void MainWindow::UI_ImportLabyrinth()
 
     if( importLabyrinthFile.isEmpty() == true ) return;
 
-    if( UI_ReadLabyrinthFile(importLabyrinthFile) == false ) {
+    Labyrinth* labyrinthTemp = readLabyrinthFile(importLabyrinthFile);
+
+    //qDebug() << labyrinthTemp->map->getNLines();
+
+    if(labyrinthTemp != NULL) {
+        delete labyrinth;
+        labyrinth = labyrinthTemp;
+
+        //qDebug() << labyrinth->map->getNLines();
+    } else {
         QMessageBox::critical(
             0,
             "Erro na leitura",
             "Configuração inválida no arquivo \n" + importLabyrinthFile);
     }
+
+    //if( UI_ReadLabyrinthFile(importLabyrinthFile) == false ) {
+//        QMessageBox::critical(
+//            0,
+//            "Erro na leitura",
+//            "Configuração inválida no arquivo \n" + importLabyrinthFile);
+//    }
 }
 
 bool MainWindow::UI_WriteLabyrinthFile(QString saveLabyrinthFile)
@@ -480,7 +492,9 @@ void MainWindow::UI_SaveLabyrinth()
     if (! saveLabyrinthFile.endsWith(".txt", Qt::CaseInsensitive) )
         saveLabyrinthFile += ".txt";
 
-    UI_WriteLabyrinthFile(saveLabyrinthFile);
+    //UI_WriteLabyrinthFile(saveLabyrinthFile);
+
+    writeLabyrinthFile(labyrinth, saveLabyrinthFile);
 }
 
 void MainWindow::UI_newCostDiagonal()
@@ -513,10 +527,13 @@ float MainWindow::getDiagonal(float a, float b)
 
 void MainWindow::start()
 {
-    //this->costDiagonal   = ui->sb_costDiagonal->value();
-    //this->costVertical   = ui->sb_costVertical->value();
-    //this->costHorizontal = ui->sb_costHorizontal->value();
+    labyrinth->setCostDiagonal( ui->sb_costDiagonal->value() );
+    labyrinth->setCostHorizontal( ui->sb_costHorizontal->value() );
+    labyrinth->setCostVertical( ui->sb_costVertical->value() );
 
+    AStar *a = new AStar(labyrinth);
+
+    a->searchPath();
     qDebug() << "run";
 }
 
@@ -524,8 +541,8 @@ float MainWindow::euclideanDistance(int line, int column)
 {
     // d(position,end) = sqrt( (xp-xe)^2 + (xp-xe)^2 )
 
-    float px = pow(line - endPosition.line, 2);
-    float py = pow(column - endPosition.column, 2);
+    float px = pow(line - endPosition.getX(), 2);
+    float py = pow(column - endPosition.getY(), 2);
 
     return sqrt(px+py);
 }
@@ -533,14 +550,17 @@ float MainWindow::euclideanDistance(int line, int column)
 void MainWindow::a_star()
 {
 
+    AStar *a = new AStar(labyrinth);
+
+    a->searchPath();
     // Distance measurement
-    float hl;
+    //float hl;
 
     // cost of movement
-    float gl;
+    //float gl;
 
     // heuristic ( fl = gl + hl)
-    float fl;
+    //float fl;
 
     //list<int> openPaths;
     //list<int> closePaths;
