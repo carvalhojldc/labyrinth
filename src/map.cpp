@@ -43,7 +43,7 @@ Map::Map() {
     columns = 0;
 }
 
-Map::Map(int lines, int columns) {
+Map::Map( int lines, int columns) {
     this->matrix  = allocMatrix(lines, columns);
     this->lines   = lines;
     this->columns = columns;

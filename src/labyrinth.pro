@@ -35,7 +35,8 @@ HEADERS  += mainwindow.h \
     labyrinth.h \
     node.h \
     position.h \
-    astar.h
+    astar.h \
+    myboard.h
 
 FORMS    += mainwindow.ui
 

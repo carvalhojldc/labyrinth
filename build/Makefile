@@ -236,7 +236,8 @@ DIST          = ../notas \
 		../src/labyrinth.h \
 		../src/node.h \
 		../src/position.h \
-		../src/astar.h ../src/main.cpp \
+		../src/astar.h \
+		../src/myboard.h ../src/main.cpp \
 		../src/mainwindow.cpp \
 		../src/map.cpp \
 		../src/labyrinth.cpp \
@@ -616,7 +617,7 @@ distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents /opt/Qt5.8.0/5.8/gcc_64/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents ../src/mainwindow.h ../src/map.h ../src/file.h ../src/labyrinth.h ../src/node.h ../src/position.h ../src/astar.h $(DISTDIR)/
+	$(COPY_FILE) --parents ../src/mainwindow.h ../src/map.h ../src/file.h ../src/labyrinth.h ../src/node.h ../src/position.h ../src/astar.h ../src/myboard.h $(DISTDIR)/
 	$(COPY_FILE) --parents ../src/main.cpp ../src/mainwindow.cpp ../src/map.cpp ../src/labyrinth.cpp ../src/astar.cpp $(DISTDIR)/
 	$(COPY_FILE) --parents ../src/mainwindow.ui $(DISTDIR)/
 
@@ -792,8 +793,6 @@ moc_mainwindow.cpp: /opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/QMainWindow \
 		/opt/Qt5.8.0/5.8/gcc_64/include/QtCore/QDebug \
 		../src/astar.h \
 		../src/node.h \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtCore/QTime \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtCore/qdatetime.h \
 		../src/file.h \
 		/opt/Qt5.8.0/5.8/gcc_64/include/QtCore/QFile \
 		../src/mainwindow.h \
@@ -960,8 +959,6 @@ main.o: ../src/main.cpp ../src/mainwindow.h \
 		/opt/Qt5.8.0/5.8/gcc_64/include/QtCore/QDebug \
 		../src/astar.h \
 		../src/node.h \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtCore/QTime \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtCore/qdatetime.h \
 		../src/file.h \
 		/opt/Qt5.8.0/5.8/gcc_64/include/QtCore/QFile \
 		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/QApplication \
@@ -1113,54 +1110,9 @@ mainwindow.o: ../src/mainwindow.cpp ../src/mainwindow.h \
 		/opt/Qt5.8.0/5.8/gcc_64/include/QtCore/QDebug \
 		../src/astar.h \
 		../src/node.h \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtCore/QTime \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtCore/qdatetime.h \
 		../src/file.h \
 		/opt/Qt5.8.0/5.8/gcc_64/include/QtCore/QFile \
-		ui_mainwindow.h \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtCore/QVariant \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/QAction \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/qaction.h \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/qactiongroup.h \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/QApplication \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/qapplication.h \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtCore/qcoreapplication.h \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtCore/qeventloop.h \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/qdesktopwidget.h \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtGui/qguiapplication.h \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtGui/qinputmethod.h \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/QButtonGroup \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/qbuttongroup.h \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/QCheckBox \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/qcheckbox.h \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/qabstractbutton.h \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/QDoubleSpinBox \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/qspinbox.h \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/QGridLayout \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/qgridlayout.h \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/qlayout.h \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/qlayoutitem.h \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/qboxlayout.h \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/QGroupBox \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/qgroupbox.h \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/QHeaderView \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/qheaderview.h \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/QLabel \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/qlabel.h \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/QMenu \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/qmenu.h \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/QMenuBar \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/qmenubar.h \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/QPushButton \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/qpushbutton.h \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/QRadioButton \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/qradiobutton.h \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/QSpacerItem \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/QSpinBox \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/QStatusBar \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/qstatusbar.h \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/QTabWidget \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/QWidget
+		ui_mainwindow.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o mainwindow.o ../src/mainwindow.cpp
 
 map.o: ../src/map.cpp ../src/map.h \
@@ -1539,9 +1491,7 @@ astar.o: ../src/astar.cpp ../src/astar.h \
 		/opt/Qt5.8.0/5.8/gcc_64/include/QtWidgets/qrubberband.h \
 		../src/position.h \
 		/opt/Qt5.8.0/5.8/gcc_64/include/QtCore/QDebug \
-		../src/node.h \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtCore/QTime \
-		/opt/Qt5.8.0/5.8/gcc_64/include/QtCore/qdatetime.h
+		../src/node.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o astar.o ../src/astar.cpp
 
 moc_mainwindow.o: moc_mainwindow.cpp 

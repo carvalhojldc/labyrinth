@@ -294,7 +294,7 @@ void MainWindow::UI_resizeBoard(int lines, int columns)
 
         // resize
         if(columns > oldColumns)
-            UI_createCellsBoard(0, oldLines, oldColumns, columns);
+            UI_createCellsBoard(0, lines, oldColumns, columns);
 
         if(startPosition.getY() > columns)
             statusStartPosition = false;
@@ -343,7 +343,7 @@ void MainWindow::UI_changeCell(int line, int column)
     else if(ui->rb_clearCell->isChecked())
         UI_setCellValue(line, column, CELL_FREE);
 }
-/*
+
 bool MainWindow::UI_ReadLabyrinthFile(QString importLabyrinthFile)
 {
     QString line;
@@ -434,7 +434,7 @@ bool MainWindow::UI_ReadLabyrinthFile(QString importLabyrinthFile)
 
     return true;
 }
-*/
+
 void MainWindow::UI_ImportLabyrinth()
 {
     importLabyrinthFile = QFileDialog::getOpenFileName(
@@ -444,7 +444,7 @@ void MainWindow::UI_ImportLabyrinth()
             "Text File (*.txt)");
 
     if( importLabyrinthFile.isEmpty() == true ) return;
-
+/*
     if(readLabyrinthFile(labyrinth, importLabyrinthFile) == false) {
         QMessageBox::critical(
              0,
@@ -464,7 +464,7 @@ void MainWindow::UI_ImportLabyrinth()
         UI_updateUI();
 
     }
-
+*/
     //qDebug() << labyrinthTemp->map->getNLines();
 
    /* if(labyrinthTemp != NULL) {
@@ -479,16 +479,16 @@ void MainWindow::UI_ImportLabyrinth()
             "Configuração inválida no arquivo \n" + importLabyrinthFile);
     }
 */
-    /*
+
     if( UI_ReadLabyrinthFile(importLabyrinthFile) == false ) {
        QMessageBox::critical(
             0,
             "Erro na leitura",
             "Configuração inválida no arquivo \n" + importLabyrinthFile);
     }
-    */
+
 }
-/*
+
 bool MainWindow::UI_WriteLabyrinthFile(QString saveLabyrinthFile)
 {
     QFile labyrinthFile(saveLabyrinthFile);
@@ -531,7 +531,7 @@ bool MainWindow::UI_WriteLabyrinthFile(QString saveLabyrinthFile)
 
     return true;
 }
-*/
+
 
 void MainWindow::UI_SaveLabyrinth()
 {
@@ -546,9 +546,9 @@ void MainWindow::UI_SaveLabyrinth()
     if (! saveLabyrinthFile.endsWith(".txt", Qt::CaseInsensitive) )
         saveLabyrinthFile += ".txt";
 
-    //UI_WriteLabyrinthFile(saveLabyrinthFile);
+    UI_WriteLabyrinthFile(saveLabyrinthFile);
 
-   writeLabyrinthFile(labyrinth, saveLabyrinthFile);
+   //writeLabyrinthFile(labyrinth, saveLabyrinthFile);
 }
 
 void MainWindow::UI_newCostDiagonal()
