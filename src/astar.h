@@ -8,6 +8,7 @@
 #include "node.h"
 
 #include <QDebug>
+#include <QTime>
 
 using std::list;
 
@@ -20,7 +21,7 @@ private:
 
     Node *startNode, *endNode;
 
-    list<Node*> openPath, closedPath;
+    list<Node*> openPath, closedPath, myPath;
 
 private:
 
@@ -88,8 +89,6 @@ private:
             if(aux < best) best = aux;
         }
 
-        qDebug() << "beste";
-        qDebug() << best->getHeuristic();
         return best;
     }
 
@@ -109,7 +108,7 @@ private:
     void addInOpenList(Node* node) {
         openPath.push_back(node);
 
-        if(node->position != endNode->position)
+        if(node->position != endNode->position && node->position != startNode->position)
             labyrinth->map->setBoardColor(node->position, CELL_OPEN_LIST);
     }
 
@@ -117,7 +116,7 @@ private:
         closedPath.push_back(node);
         removeNodeList(openPath, node);
 
-        if(node->position != endNode->position)
+        if(node->position != endNode->position && node->position != startNode->position)
             labyrinth->map->setBoardColor(node->position, CELL_CLOSED_LIST);
     }
 
@@ -139,16 +138,9 @@ private:
         myY == 0 ? startColumn = myY : startColumn = myY-1;
         myY == labyrinth->map->getNColumns()-1 ? endColumn = myY : endColumn = myY+1;
 
-        //qDebug() << "l" << endLine << "c" << endColumn;
-        //if(endLine<1 || endColumn<1 || (endLine==1 && endColumn==1)) return false;
-
-        qDebug() << "#####################################";
-        qDebug() << " - startLine: " << startLine << " endLine: " << endLine;
-        qDebug() << " - startColumn: " << startColumn << " endColumn:  " << endColumn;
-
         for(int line=startLine; line<=endLine; line++) {
             for(int column=startColumn; column<=endColumn; column++) {
-                qDebug() << "# search = line: " << line << " column: " << column;
+
                 Position newNeighbor(line,column);
 
                 if( isFree(node, newNeighbor) && !inList(closedPath, newNeighbor) )
@@ -163,10 +155,6 @@ private:
                     else if(neighbor->getHeuristic() < theBest->getHeuristic())
                         theBest = neighbor;
 
-                    qDebug() << " neighbor = x:" << newNeighbor.getX() << " y:" << newNeighbor.getY();
-                    qDebug() << "    neighbor: x" << neighbor->position.getX() << " y" << neighbor->position.getY() << "  heuristic" << neighbor->getHeuristic();
-                    qDebug() << "    thebest: x" << theBest->position.getX() << " y" << theBest->position.getX() << "  heuristic" << theBest->getHeuristic();
-
                     for(it=openPath.begin(); it!=openPath.end(); it++) {
                         temp = *it;
                         if(temp->position == neighbor->position)
@@ -174,11 +162,8 @@ private:
                     }
 
                     if(it == openPath.end()) {
-                        qDebug() << "insert in open " << neighbor->position.getX() << neighbor->position.getY();
-
                         addInOpenList(neighbor);
                     } else {
-                        qDebug() << "++++++atualizar " << neighbor->position.getX() << neighbor->position.getY();
                         temp->setParent(node);
                         temp->setG(g);
                     }
@@ -186,54 +171,20 @@ private:
             }
         }
 
-        //qDebug() << "thebest: x" << theBest->position.getX() << " y" << theBest->position.getX() << "  heuristic" << theBest->getHeuristic();
-
         if(theBest != nullptr) {
             addInClosedList(theBest);
-
-            qDebug() << "remove in open " << theBest->position.getX() << theBest->position.getY();
-
         } else if(openPath.size() != 0) {
-            qDebug() << "buscar proximo aberto +++++++++++++++++++++++"  ;
-            //getBest(openPath);
-            //return false;
             theBest = getBest(openPath);
             addInClosedList(theBest);
-        } else {
-            qDebug() << "adeus adeus %%%%%%%%%%%%%%%%%%%%%%%%%%%%";
+        } else {           
             return false;
         }
 
-
-
-        if(theBest->position == endNode->position) return true;
-        else getNeighbors(closedPath.back());
-
-        /*
-        qDebug() << "thebest: x" << theBest->position.getX() << " y" << theBest->position.getX() << "  heuristic" << theBest->getHeuristic();
-        if(theBest->position == endNode->position) {
-            qDebug() << "ok";
-            addInClosedList(theBest);
-            getNeighbors(closedPath.back());
-            return true;
-        } else if(theBest != nullptr) {
-            //labyrinth->map->board->item(theBest->getX(), theBest->getY())->setBackgroundColor(Qt::red);
-            qDebug() << "theBest ok";
-            //closedPath.push_back(theBest);
-            //qDebug() << "add" << theBest->position.getX() << theBest->position.getY();
-            //openPath.remove(theBest);
-            addInClosedList(theBest);
-            getNeighbors(closedPath.back());
-        } else if(openPath.size() != 0) {
-            qDebug() << "buscar proximo aberto"  ;
-            //return false;
-            addInClosedList(getBest(openPath));
+        if(theBest->position != endNode->position) {
             getNeighbors(closedPath.back());
         }
 
-        qDebug() << "+++++++++++";
-        return false;
-        */
+        return true;
     }
 
 public:
@@ -247,16 +198,35 @@ public:
 
         startNode = new Node(nullptr, labyrinth->map->getStartPosition());
         endNode   = new Node(nullptr, labyrinth->map->getEndPosition());
-
-        //qDebug() << "startNode " << startNode->position.getX() << " " << startNode->position.getY();
-        //qDebug() << "endNode " << endNode->position.getX() << " " << endNode->position.getY();
     }
 
-    list<Node*> searchPath() {
+    const inline list<Node*> getMyPath() const
+    { return myPath; }
+
+    const inline list<Node*> getClosedPath() const
+    { return closedPath; }
+
+    const inline list<Node*> getOpenPath() const
+    { return openPath; }
+
+    void searchPath() {
         closedPath.push_back(startNode);
 
         getNeighbors(closedPath.back());
 
+        Node *temp;
+        myPath.push_back( closedPath.back() );
+        while(myPath.back() != startNode) {
+            temp = myPath.back();
+
+            if(temp->position != startNode->position && temp->position != endNode->position)
+                labyrinth->map->setBoardColor( temp->position, CELL_PATH);
+
+            myPath.push_back( temp->getParent() );
+        }
+        qDebug() << "myPath gg" << myPath.size();
+
+        /*
         list<Node*>::iterator it;
 
         qDebug() <<"closedPath.size(): " << closedPath.size();
@@ -269,7 +239,14 @@ public:
             Node* temp = *it;
             qDebug() << temp->position.getX() << " " << temp->position.getY();
         }
-        return closedPath;
+
+        qDebug() <<"myPath.size(): " << myPath.size();
+        for(it=myPath.begin(); it!=myPath.end(); it++) {
+            Node* temp = *it;
+            qDebug() << temp->position.getX() << " " << temp->position.getY();
+
+        }
+        */
     }
 };
 

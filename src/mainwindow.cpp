@@ -61,6 +61,13 @@ MainWindow::MainWindow(QWidget *parent) :
     // end UI
     // --------------
 
+    ui->tableMyPath->setColumnCount(TABLE_NUMB_COL);
+
+    ui->tableMyPath->setColumnWidth(TABLE_LIST_HEURISTIC, ui->tableMyPath->width()*0.5);
+    ui->tableMyPath->setColumnWidth(TABLE_LIST_X, ui->tableMyPath->width()*0.2);
+    ui->tableMyPath->setColumnWidth(TABLE_LIST_Y, ui->tableMyPath->width()*0.2);
+
+    ui->tableMyPath->setHorizontalHeaderLabels(listColumProcess);
 }
 
 MainWindow::~MainWindow()
@@ -551,16 +558,38 @@ void MainWindow::start()
     labyrinth->setCostHorizontal( ui->sb_costHorizontal->value() );
     labyrinth->setCostVertical( ui->sb_costVertical->value() );
 
-    AStar *a = new AStar(labyrinth);
+    AStar *astar = new AStar(labyrinth);
 
-    list<Node*> teste = a->searchPath();
+    astar->searchPath();
 
     list<Node*>::iterator it;
-    for(it=teste.begin(); it!=teste.end(); it++) {
-        //Node* temp = *it;
-        //if(temp->position != labyrinth->map->getStartPosition() || temp->position != labyrinth->map->getEndPosition())
-//            ui->board->item(temp->position.getX(), temp->position.getY())\
-                    ->setBackgroundColor(Qt::yellow);
+    list<Node*> openPath = astar->getOpenPath();
+    list<Node*> closedPath = astar->getClosedPath();
+    list<Node*> myPath = astar->getMyPath();
+
+    qDebug() << "myPath" << myPath.size();
+     qDebug() << "closedPath" << closedPath.size();
+      qDebug() << "openPath" << openPath.size();
+
+    Node *node;
+    int position;
+
+    ui->tableMyPath->setRowCount(myPath.size());
+    it=myPath.begin();
+    position=0;
+    while( it!=myPath.end() ) {
+        node = *it;
+        ui->tableMyPath->setItem(position, TABLE_LIST_HEURISTIC, \
+            new QTableWidgetItem( QString::number( node->getHeuristic()) ));
+        ui->tableMyPath->setItem(position, TABLE_LIST_X, \
+            new QTableWidgetItem( QString::number(node->position.getX()) ));
+        ui->tableMyPath->setItem(position, TABLE_LIST_Y, \
+            new QTableWidgetItem( QString::number(node->position.getY()) ));
+
+        qDebug() << node->getHeuristic();
+
+        position++;
+        it++;
     }
-    qDebug() << "run";
+
 }

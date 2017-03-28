@@ -14,6 +14,9 @@
 
 #include <QDebug>
 
+#define TABLE_NUMB_COL 3
+enum columProcess {TABLE_LIST_HEURISTIC, TABLE_LIST_X, TABLE_LIST_Y};
+
 namespace Ui {
 class MainWindow;
 }
@@ -83,6 +86,8 @@ private:
     Colors colors;
 
     Labyrinth* labyrinth;
+
+    QStringList listColumProcess = { "Heuristic" , "X" , "Y"};
 };
 
 #endif // MAINWINDOW_H
