@@ -2,13 +2,8 @@
 #define ASTAR_H
 
 #include <list>
-#include <algorithm>
-
 #include "labyrinth.h"
 #include "node.h"
-
-#include <QDebug>
-#include <QTime>
 
 using std::list;
 

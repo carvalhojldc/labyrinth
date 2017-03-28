@@ -148,6 +148,7 @@ void MainWindow::UI_setConfig()
 
     ui->pb_newBoard->setIcon(this->style()->standardIcon(QStyle::SP_BrowserReload));
     ui->pb_clearBoard->setIcon(this->style()->standardIcon(QStyle::SP_TrashIcon));
+    ui->pb_clearSearch->setIcon(this->style()->standardIcon(QStyle::SP_TrashIcon));
     ui->pb_start->setIcon(this->style()->standardIcon(QStyle::SP_DialogYesButton));
 
     ui->rb_wall->setIcon(QIcon("../icons/colors/" + colors.wall + ".png"));
@@ -182,13 +183,25 @@ void MainWindow::UI_changeButtonUpdate()
     ui->pb_newBoard->setStyleSheet("background-color: red");
 }
 
-void MainWindow::UI_clearBoard()
-{
+void MainWindow::UI_clear() {
     for(int l=0; l<labyrinth->map->getNLines(); l++) {
         for(int c=0; c<labyrinth->map->getNColumns(); c++) {
             UI_setCellValue(l,c,CELL_FREE);
         }
     }
+}
+
+void MainWindow::UI_clearBoard()
+{
+    QMessageBox::StandardButton reply;
+    reply = QMessageBox::question(this,
+                                  "Apagar labirinto",
+                                  "Você realmente deseja apagar o labirinto?",
+                                  QMessageBox::Yes|QMessageBox::No );
+    if (reply == QMessageBox::No) return;
+
+    UI_clear();
+
 }
 
 void MainWindow::UI_setCellValue(int line, int column, int value)
@@ -330,7 +343,7 @@ void MainWindow::UI_changeCell(int line, int column)
     else if(ui->rb_clearCell->isChecked())
         UI_setCellValue(line, column, CELL_FREE);
 }
-
+/*
 bool MainWindow::UI_ReadLabyrinthFile(QString importLabyrinthFile)
 {
     QString line;
@@ -406,7 +419,7 @@ bool MainWindow::UI_ReadLabyrinthFile(QString importLabyrinthFile)
 
     //allocateLabyrinth();
 
-    UI_clearBoard();
+    UI_clear();
     UI_resizeBoard(numberLines, numberColumns);
 
     for(int l=0; l < labyrinth->map->getNLines(); l++) {
@@ -421,7 +434,7 @@ bool MainWindow::UI_ReadLabyrinthFile(QString importLabyrinthFile)
 
     return true;
 }
-
+*/
 void MainWindow::UI_ImportLabyrinth()
 {
     importLabyrinthFile = QFileDialog::getOpenFileName(
@@ -432,11 +445,29 @@ void MainWindow::UI_ImportLabyrinth()
 
     if( importLabyrinthFile.isEmpty() == true ) return;
 
-    Labyrinth* labyrinthTemp = readLabyrinthFile(importLabyrinthFile);
+    if(readLabyrinthFile(labyrinth, importLabyrinthFile) == false) {
+        QMessageBox::critical(
+             0,
+             "Erro na leitura",
+             "Configuração inválida no arquivo \n" + importLabyrinthFile);
+    } else {
+
+        UI_clear();
+        UI_resizeBoard(labyrinth->map->getNLines(), labyrinth->map->getNColumns());
+
+        for(int l=0; l < labyrinth->map->getNLines(); l++) {
+            for(int c=0; c < labyrinth->map->getNColumns(); c++) {
+                UI_setCellValue(l,c,labyrinth->map->get(l,c));
+            }
+        }
+
+        UI_updateUI();
+
+    }
 
     //qDebug() << labyrinthTemp->map->getNLines();
 
-    if(labyrinthTemp != NULL) {
+   /* if(labyrinthTemp != NULL) {
         delete labyrinth;
         labyrinth = labyrinthTemp;
 
@@ -447,15 +478,17 @@ void MainWindow::UI_ImportLabyrinth()
             "Erro na leitura",
             "Configuração inválida no arquivo \n" + importLabyrinthFile);
     }
-
-    //if( UI_ReadLabyrinthFile(importLabyrinthFile) == false ) {
-//        QMessageBox::critical(
-//            0,
-//            "Erro na leitura",
-//            "Configuração inválida no arquivo \n" + importLabyrinthFile);
-//    }
+*/
+    /*
+    if( UI_ReadLabyrinthFile(importLabyrinthFile) == false ) {
+       QMessageBox::critical(
+            0,
+            "Erro na leitura",
+            "Configuração inválida no arquivo \n" + importLabyrinthFile);
+    }
+    */
 }
-
+/*
 bool MainWindow::UI_WriteLabyrinthFile(QString saveLabyrinthFile)
 {
     QFile labyrinthFile(saveLabyrinthFile);
@@ -476,7 +509,7 @@ bool MainWindow::UI_WriteLabyrinthFile(QString saveLabyrinthFile)
     out << lines << ' '
         << columns << ' '
         << labyrinth->getCostHorizontal() << ' '
-        << labyrinth->getCostDiagonal() << endl;
+        << labyrinth->getCostVertical() << endl;
 
     for(int l = 0; l<lines; l++) {
         for(int c = 0; c<columns; c++) {
@@ -498,6 +531,7 @@ bool MainWindow::UI_WriteLabyrinthFile(QString saveLabyrinthFile)
 
     return true;
 }
+*/
 
 void MainWindow::UI_SaveLabyrinth()
 {
@@ -514,7 +548,7 @@ void MainWindow::UI_SaveLabyrinth()
 
     //UI_WriteLabyrinthFile(saveLabyrinthFile);
 
-    writeLabyrinthFile(labyrinth, saveLabyrinthFile);
+   writeLabyrinthFile(labyrinth, saveLabyrinthFile);
 }
 
 void MainWindow::UI_newCostDiagonal()
@@ -525,7 +559,10 @@ void MainWindow::UI_newCostDiagonal()
         float costDiagonal = getDiagonal(costHorizontal, costVertical);
 
         ui->sb_costDiagonal->setValue(costDiagonal);
+    } else {
+        UI_changeButtonUpdate();
     }
+
 }
 
 void MainWindow::UI_EditCostDiagonal(bool value)
@@ -533,6 +570,7 @@ void MainWindow::UI_EditCostDiagonal(bool value)
     ui->sb_costDiagonal->setDisabled(value);
 }
 
+/*
 float MainWindow::getDiagonal(float a, float b)
 {
     float cost;
@@ -543,6 +581,7 @@ float MainWindow::getDiagonal(float a, float b)
     cost = int(cost*d);
     return cost/d;
 }
+*/
 
 
 void MainWindow::updatePathTables(QTableWidget *table, list<Node*> l)
@@ -573,19 +612,20 @@ void MainWindow::updatePathTables(QTableWidget *table, list<Node*> l)
 
 void MainWindow::start()
 {
-    if(statusEndPosition == false) {
-        QMessageBox::critical(
-            0,
-            "Mapa inválido",
-            "Defina o ponto de chegada");
-
-        return;
-    }
     if(statusStartPosition == false) {
         QMessageBox::critical(
             0,
             "Mapa inválido",
             "Defina o ponto de partida");
+
+        return;
+    }
+
+    if(statusEndPosition == false) {
+        QMessageBox::critical(
+            0,
+            "Mapa inválido",
+            "Defina o ponto de chegada");
 
         return;
     }

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>917</width>
+    <width>955</width>
     <height>668</height>
    </rect>
   </property>
@@ -124,6 +124,12 @@
                </item>
                <item row="6" column="0" colspan="2">
                 <widget class="QPushButton" name="pb_newBoard">
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>30</height>
+                  </size>
+                 </property>
                  <property name="text">
                   <string> Atualizar</string>
                  </property>
@@ -160,6 +166,20 @@
                <string>Desenho do labirinto</string>
               </property>
               <layout class="QGridLayout" name="gridLayout">
+               <item row="1" column="1">
+                <widget class="QRadioButton" name="rb_clearCell">
+                 <property name="text">
+                  <string>Apagador</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="0">
+                <widget class="QRadioButton" name="rb_wall">
+                 <property name="text">
+                  <string>Obstáculo</string>
+                 </property>
+                </widget>
+               </item>
                <item row="0" column="0">
                 <widget class="QRadioButton" name="rb_start">
                  <property name="text">
@@ -174,24 +194,29 @@
                  </property>
                 </widget>
                </item>
-               <item row="1" column="0">
-                <widget class="QRadioButton" name="rb_wall">
-                 <property name="text">
-                  <string>Obstáculo</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="1">
-                <widget class="QRadioButton" name="rb_clearCell">
-                 <property name="text">
-                  <string>Apagador</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="2" column="0" colspan="2">
+               <item row="3" column="0">
                 <widget class="QPushButton" name="pb_clearBoard">
+                 <property name="minimumSize">
+                  <size>
+                   <width>135</width>
+                   <height>30</height>
+                  </size>
+                 </property>
                  <property name="text">
                   <string> Apagar labirinto</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="1">
+                <widget class="QPushButton" name="pb_clearSearch">
+                 <property name="minimumSize">
+                  <size>
+                   <width>135</width>
+                   <height>30</height>
+                  </size>
+                 </property>
+                 <property name="text">
+                  <string>Apagar caminho</string>
                  </property>
                 </widget>
                </item>
@@ -216,7 +241,7 @@
                </size>
               </property>
               <property name="text">
-               <string>Resolver</string>
+               <string>Encontrar caminho</string>
               </property>
              </widget>
             </item>
@@ -228,7 +253,7 @@
               <property name="sizeHint" stdset="0">
                <size>
                 <width>20</width>
-                <height>92</height>
+                <height>40</height>
                </size>
               </property>
              </spacer>
@@ -372,7 +397,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>917</width>
+     <width>955</width>
      <height>22</height>
     </rect>
    </property>

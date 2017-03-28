@@ -38,6 +38,7 @@ private slots:
 
     void UI_changeButtonUpdate();
 
+    void UI_clear();
     void UI_clearBoard();
     void UI_setCellValue(int line, int column, int value);
     void UI_createCellsBoard(int startLine, int endLine, int startColumn, int endColumn);
@@ -50,10 +51,10 @@ private slots:
     void UI_changeCell(int,int);
 
     // read_write
-    bool UI_ReadLabyrinthFile(QString);
+    //bool UI_ReadLabyrinthFile(QString);
     void UI_ImportLabyrinth();
 
-    bool UI_WriteLabyrinthFile(QString);
+    //bool UI_WriteLabyrinthFile(QString);
     void UI_SaveLabyrinth();
     // end read_write
 
@@ -64,7 +65,7 @@ private slots:
     void start();
 
 private:
-    float getDiagonal(float a, float b);
+    //float getDiagonal(float a, float b);
 
     void updatePathTables(QTableWidget *table, list<Node*> l);
 

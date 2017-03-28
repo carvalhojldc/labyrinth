@@ -9,11 +9,20 @@
 class File {
 
 public:
-    File() { }
 
-    ~File() { }
+    float getDiagonal(float a, float b)
+    {
+        float cost;
+        float d = 100;
 
-    bool writeLabyrinthFile(Labyrinth* labyrinth, QString saveLabyrinthFile) {
+        cost = sqrt( pow(a,2) + pow(b,2) );
+
+        cost = int(cost*d);
+        return cost/d;
+    }
+
+    bool writeLabyrinthFile(Labyrinth* labyrinth, QString saveLabyrinthFile)
+    {
         QFile labyrinthFile(saveLabyrinthFile);
 
         if( ! labyrinthFile.open(QIODevice::WriteOnly) ) {
@@ -56,12 +65,10 @@ public:
         return true;
     }
 
-    Labyrinth* readLabyrinthFile(QString file) {
+    bool readLabyrinthFile(Labyrinth* labyrinth, QString file)
+    {
         QString line;
         QStringList listLine;
-
-        Labyrinth* labyrinth;
-        Map* map;
 
         QFile labyrinthFile(file);
 
@@ -71,7 +78,7 @@ public:
                 "Error: opening labyrinth",
                 labyrinthFile.errorString());
 
-            return NULL;
+            return false;
         }
 
         QTextStream in(&labyrinthFile);
@@ -82,7 +89,7 @@ public:
         // validation
         if( listLine.size() != 4 ) {
             qDebug() << "error:labyrinth:validation_config";
-            return NULL;
+            return false;
         }
 
         int countLines;
@@ -97,7 +104,7 @@ public:
         for(countLines=0; ! in.atEnd(); countLines++) {
             if( numberLines < countLines ) {
                 qDebug() << "error:labyrinth:validation_lines_size";
-                return NULL;
+                return false;
             }
 
             line = in.readLine();
@@ -105,42 +112,39 @@ public:
 
             if( listLine.size() != numberColumns ) {
                 qDebug() << "error:labyrinth:validation_columns_size";
-                return NULL;
+                return false;
             }
 
             for(int c=0; c<listLine.size(); c++) {
                 positionValue = listLine.at(c).toInt();
                 if( positionValue < 0 || positionValue > 3 ) {
                     qDebug() << "error:labyrinth:validation_elements";
-                    return NULL;
+                    return false;
                 }
             }
         }
 
         if( countLines != numberLines ) {
             qDebug() << "error:labyrinth:validation_lines_size";
-            return NULL;
+            return false;
         }
+         labyrinthFile.close();
         // end all_validataion
         // ---------------------------
 
-        qDebug() << "custos " << costHorizontal << " " << costVertical;
-
-        map = new Map(numberLines, numberColumns);
+        labyrinth->map->setNewSize(numberLines, numberColumns);
 
         for(int line=0; line<numberLines; line++) {
             for(int column=0; column<numberColumns; column++) {
-                map->set(line, column, labyrinthTemp[line][column]);
+                labyrinth->map->set(line, column, labyrinthTemp[line][column]);
             }
         }
 
-        qDebug() << "b" << map->getNLines();
-        labyrinth = new Labyrinth(map, 0, 0, 0);
+        labyrinth->setCostDiagonal( getDiagonal(costVertical, costHorizontal) );
+        labyrinth->setCostVertical(costVertical);
+        labyrinth->setCostHorizontal(costHorizontal);
 
-        qDebug() << "c" << labyrinth->getCostDiagonal();
-        qDebug() << "a" << labyrinth->map->getNLines();
-
-        return labyrinth;
+        return true;
     }
 };
 
