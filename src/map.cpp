@@ -64,29 +64,43 @@ void Map::clear() {
     columns = 0;
 }
 
+void Map::setBoardColor(Position position, int color) {
+
+    QString sColor;
+
+    switch (color) {
+    case CELL_END:
+        sColor = colors.end;
+        break;
+    case CELL_FREE:
+        sColor = colors.free;
+        break;
+    case CELL_START:
+        sColor = colors.start;
+        break;
+    case CELL_WALL:
+        sColor = colors.wall;
+        break;
+    case CELL_PATH:
+        sColor = colors.path;
+        break;
+    case CELL_OPEN_LIST:
+        sColor = colors.openList;
+        break;
+    case CELL_CLOSED_LIST:
+        sColor = colors.closedList;
+        break;
+    }
+
+    this->board->item(position.getX(), position.getY())->setBackgroundColor(sColor);
+}
+
 bool Map::set(int line, int column, int value) {
     if(validatePosition(line,column) == false)
         return false;
 
-    /*QString color;
-
-    switch (value) {
-    case CELL_END:
-        color = colors.end;
-        break;
-    case CELL_FREE:
-        color = colors.free;
-        break;
-    case CELL_START:
-        color = colors.start;
-        break;
-    case CELL_WALL:
-        color = colors.wall;
-        break;
-    }*/
-
     matrix[line][column] = value;
-    //board->item(line,column)->setBackgroundColor(colors.wall);
+    //setBoardColor(line, column, value);
 
     if(value == CELL_START) {
         startPosition.setPosition(line, column);
@@ -157,7 +171,11 @@ void Map::setNewSize(int lines, int columns) {
 void Map::setBoard(QTableWidget *board) {
     this->board = board;
 
-    qDebug() << this->board->item(0,0)->text();
+    qDebug() << "teste da board";
+    //this->board->item(0,0)->setBackground(Qt::red);
+
+    //this->board->item(0, 0)\
+                            ->setBackgroundColor(Qt::red);
 }
 
 Position Map::getStartPosition()

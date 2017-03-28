@@ -51,6 +51,10 @@ public:
         return (this->position == node.position);
     }
 
+    bool operator == (Node* node) {
+        return (this->position == node->position);
+    }
+
     bool operator < (Node* node) {
         return this->getHeuristic() < node->getHeuristic();
     }

@@ -156,6 +156,9 @@ void MainWindow::UI_setBoard()
 
     ui->board->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     ui->board->verticalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+
+    // debug
+    labyrinth->map->setBoard(ui->board);
 }
 
 void MainWindow::UI_changeButtonUpdate()
@@ -527,52 +530,37 @@ float MainWindow::getDiagonal(float a, float b)
 
 void MainWindow::start()
 {
+    if(statusEndPosition == false) {
+        QMessageBox::critical(
+            0,
+            "Mapa inválido",
+            "Defina o ponto de chegada");
+
+        return;
+    }
+    if(statusStartPosition == false) {
+        QMessageBox::critical(
+            0,
+            "Mapa inválido",
+            "Defina o ponto de partida");
+
+        return;
+    }
+
     labyrinth->setCostDiagonal( ui->sb_costDiagonal->value() );
     labyrinth->setCostHorizontal( ui->sb_costHorizontal->value() );
     labyrinth->setCostVertical( ui->sb_costVertical->value() );
 
     AStar *a = new AStar(labyrinth);
 
-   // a->searchPath();
-
     list<Node*> teste = a->searchPath();
 
     list<Node*>::iterator it;
     for(it=teste.begin(); it!=teste.end(); it++) {
-        Node* temp = *it;
-        ui->board->item(temp->position.getX(), temp->position.getY())\
-                ->setBackgroundColor(Qt::yellow);
+        //Node* temp = *it;
+        //if(temp->position != labyrinth->map->getStartPosition() || temp->position != labyrinth->map->getEndPosition())
+//            ui->board->item(temp->position.getX(), temp->position.getY())\
+                    ->setBackgroundColor(Qt::yellow);
     }
     qDebug() << "run";
-}
-
-float MainWindow::euclideanDistance(int line, int column)
-{
-    // d(position,end) = sqrt( (xp-xe)^2 + (xp-xe)^2 )
-
-    float px = pow(line - endPosition.getX(), 2);
-    float py = pow(column - endPosition.getY(), 2);
-
-    return sqrt(px+py);
-}
-
-void MainWindow::a_star()
-{
-
-    AStar *a = new AStar(labyrinth);
-
-
-    // Distance measurement
-    //float hl;
-
-    // cost of movement
-    //float gl;
-
-    // heuristic ( fl = gl + hl)
-    //float fl;
-
-    //list<int> openPaths;
-    //list<int> closePaths;
-
-
 }

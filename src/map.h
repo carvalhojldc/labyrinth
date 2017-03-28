@@ -12,12 +12,21 @@ struct Colors {
     const QString end   = "blue";
     const QString wall  = "black";
     const QString free  = "white";
+
+    const QString path       = "red";
+    const QString openList   = "yellow";
+    const QString closedList = "orange";
+
 };
 
 #define CELL_FREE  0
 #define CELL_WALL  1
 #define CELL_START 2
 #define CELL_END   3
+#define CELL_PATH  4
+#define CELL_OPEN_LIST   5
+#define CELL_CLOSED_LIST 6
+
 
 class Map {
 
@@ -53,6 +62,8 @@ public:
     ~Map();
 
     void clear();
+
+    void setBoardColor(Position position, int color);
 
     bool set(int line, int column, int value);
 

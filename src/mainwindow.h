@@ -64,9 +64,6 @@ private slots:
 private:
     float getDiagonal(float a, float b);
 
-    float euclideanDistance(int line, int column);
-    void a_star();
-
 private:
     Ui::MainWindow *ui;
 
