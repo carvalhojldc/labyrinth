@@ -150,6 +150,12 @@ private:
 
                     Node *neighbor = new Node(node, newNeighbor, g, h);
 
+                    if(neighbor->position==endNode->position) {
+                        theBest = neighbor;
+                        break;
+                    }
+
+
                     if(theBest == nullptr)
                         theBest = neighbor;
                     else if(neighbor->getHeuristic() < theBest->getHeuristic())
@@ -182,9 +188,9 @@ private:
 
         if(theBest->position != endNode->position) {
             getNeighbors(closedPath.back());
+        } else {
+            return true;
         }
-
-        return true;
     }
 
 public:
@@ -212,18 +218,21 @@ public:
     void searchPath() {
         closedPath.push_back(startNode);
 
-        getNeighbors(closedPath.back());
+        if(getNeighbors(closedPath.back()))
+        {
+            Node *temp;
+            myPath.push_front( closedPath.back() );
+            while(myPath.front() != startNode) {
+                temp = myPath.front();
 
-        Node *temp;
-        myPath.push_back( closedPath.back() );
-        while(myPath.back() != startNode) {
-            temp = myPath.back();
+                if(temp->position != startNode->position && temp->position != endNode->position)
+                    labyrinth->map->setBoardColor( temp->position, CELL_PATH);
 
-            if(temp->position != startNode->position && temp->position != endNode->position)
-                labyrinth->map->setBoardColor( temp->position, CELL_PATH);
-
-            myPath.push_back( temp->getParent() );
+                myPath.push_front( temp->getParent() );
+            }
         }
+
+
         qDebug() << "myPath gg" << myPath.size();
 
         /*

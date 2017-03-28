@@ -16,11 +16,11 @@ public:
     Position position;
 
     Node() {
-        setNode(nullptr, Position(-1,-1), -1, -1);
+        setNode(nullptr, Position(0,0), 0, 0);
     }
 
     Node(Node* parent, Position positon) {
-        setNode(parent, positon, -1, -1);
+        setNode(parent, positon, 0, 0);
     }
 
     Node(Node* parent, Position positon, float g, float h) {

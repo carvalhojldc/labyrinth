@@ -14,9 +14,6 @@
 
 #include <QDebug>
 
-#define TABLE_NUMB_COL 3
-enum columProcess {TABLE_LIST_HEURISTIC, TABLE_LIST_X, TABLE_LIST_Y};
-
 namespace Ui {
 class MainWindow;
 }
@@ -32,6 +29,8 @@ public:
 private slots:
     void UI_license();
     void UI_help();
+
+    void UI_createPathTable(QTableWidget *table);
 
     void UI_updateUI();
     void UI_setConfig();
@@ -67,6 +66,8 @@ private slots:
 private:
     float getDiagonal(float a, float b);
 
+    void updatePathTables(QTableWidget *table, list<Node*> l);
+
 private:
     Ui::MainWindow *ui;
 
@@ -86,8 +87,6 @@ private:
     Colors colors;
 
     Labyrinth* labyrinth;
-
-    QStringList listColumProcess = { "Heuristic" , "X" , "Y"};
 };
 
 #endif // MAINWINDOW_H

@@ -58,16 +58,11 @@ MainWindow::MainWindow(QWidget *parent) :
     UI_setBoard();
     UI_updateUI();
 
+    UI_createPathTable(ui->tableMyPath);
+    UI_createPathTable(ui->tableOpenPath);
+    UI_createPathTable(ui->tableClosedPath);
     // end UI
     // --------------
-
-    ui->tableMyPath->setColumnCount(TABLE_NUMB_COL);
-
-    ui->tableMyPath->setColumnWidth(TABLE_LIST_HEURISTIC, ui->tableMyPath->width()*0.5);
-    ui->tableMyPath->setColumnWidth(TABLE_LIST_X, ui->tableMyPath->width()*0.2);
-    ui->tableMyPath->setColumnWidth(TABLE_LIST_Y, ui->tableMyPath->width()*0.2);
-
-    ui->tableMyPath->setHorizontalHeaderLabels(listColumProcess);
 }
 
 MainWindow::~MainWindow()
@@ -117,6 +112,19 @@ João Leite de Carvalho - carvalhojldc@gmail.com";
     help->setWindowTitle("Help");
 
     help->exec();
+}
+
+void MainWindow::UI_createPathTable(QTableWidget *table)
+{
+    QStringList listColumProcess = {"X" , "Y", "Heuristic" };
+
+    table->setColumnCount(3);
+
+    table->setColumnWidth(2, table->width()*0.5);
+    table->setColumnWidth(0, table->width()*0.2);
+    table->setColumnWidth(1, table->width()*0.2);
+
+    table->setHorizontalHeaderLabels(listColumProcess);
 }
 
 void MainWindow::UI_updateUI()
@@ -308,6 +316,9 @@ void MainWindow::disableEndCell(int line, int column)
 
 void MainWindow::UI_changeCell(int line, int column)
 {
+
+    if(ui->tabLabyrint->isVisible() == false) return;
+
     if(ui->rb_start->isChecked() && ((startPosition.getX() != line \
             || startPosition.getY() != column) || statusStartPosition == false) )
         UI_setCellValue(line,column, CELL_START);
@@ -535,6 +546,32 @@ float MainWindow::getDiagonal(float a, float b)
 }
 
 
+void MainWindow::updatePathTables(QTableWidget *table, list<Node*> l)
+{
+    table->setRowCount(l.size());
+
+    list<Node*>::iterator it;
+    Node *node;
+    int position;
+
+    qDebug() << l.size();
+
+    it=l.begin();
+    position=0;
+    while( it!=l.end() ) {
+        node = *it;
+        table->setItem(position, 2, \
+            new QTableWidgetItem( QString::number( node->getHeuristic()) ));
+        table->setItem(position, 0, \
+            new QTableWidgetItem( QString::number(node->position.getX()+1) ));
+        table->setItem(position, 1, \
+            new QTableWidgetItem( QString::number(node->position.getY()+1) ));
+
+        position++;
+        it++;
+    }
+}
+
 void MainWindow::start()
 {
     if(statusEndPosition == false) {
@@ -562,34 +599,15 @@ void MainWindow::start()
 
     astar->searchPath();
 
-    list<Node*>::iterator it;
-    list<Node*> openPath = astar->getOpenPath();
-    list<Node*> closedPath = astar->getClosedPath();
-    list<Node*> myPath = astar->getMyPath();
-
-    qDebug() << "myPath" << myPath.size();
-     qDebug() << "closedPath" << closedPath.size();
-      qDebug() << "openPath" << openPath.size();
-
-    Node *node;
-    int position;
-
-    ui->tableMyPath->setRowCount(myPath.size());
-    it=myPath.begin();
-    position=0;
-    while( it!=myPath.end() ) {
-        node = *it;
-        ui->tableMyPath->setItem(position, TABLE_LIST_HEURISTIC, \
-            new QTableWidgetItem( QString::number( node->getHeuristic()) ));
-        ui->tableMyPath->setItem(position, TABLE_LIST_X, \
-            new QTableWidgetItem( QString::number(node->position.getX()) ));
-        ui->tableMyPath->setItem(position, TABLE_LIST_Y, \
-            new QTableWidgetItem( QString::number(node->position.getY()) ));
-
-        qDebug() << node->getHeuristic();
-
-        position++;
-        it++;
+    if( (astar->getMyPath()).size() == 0 ) {
+           QMessageBox::critical(
+               0,
+               "Rota não definida",
+               "Não foi possível encontrar uma rota");
     }
+
+    updatePathTables(ui->tableOpenPath,   astar->getOpenPath() );
+    updatePathTables(ui->tableClosedPath, astar->getClosedPath() );
+    updatePathTables(ui->tableMyPath,     astar->getMyPath() );
 
 }
