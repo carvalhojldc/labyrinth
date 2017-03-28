@@ -26,7 +26,8 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += main.cpp\
         mainwindow.cpp \
     map.cpp \
-    labyrinth.cpp
+    labyrinth.cpp \
+    astar.cpp
 
 HEADERS  += mainwindow.h \
     map.h \

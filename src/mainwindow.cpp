@@ -116,13 +116,13 @@ João Leite de Carvalho - carvalhojldc@gmail.com";
 
 void MainWindow::UI_createPathTable(QTableWidget *table)
 {
-    QStringList listColumProcess = {"X" , "Y", "Heuristic" };
+    QStringList listColumProcess = {"Position (X:Y)", "Heuristic", "Parent (X:Y)" };
 
     table->setColumnCount(3);
 
-    table->setColumnWidth(2, table->width()*0.5);
-    table->setColumnWidth(0, table->width()*0.2);
-    table->setColumnWidth(1, table->width()*0.2);
+    table->setColumnWidth(2, table->width()*0.33);
+    table->setColumnWidth(0, table->width()*0.33);
+    table->setColumnWidth(1, table->width()*0.33);
 
     table->setHorizontalHeaderLabels(listColumProcess);
 }
@@ -478,7 +478,6 @@ bool MainWindow::UI_WriteLabyrinthFile(QString saveLabyrinthFile)
         << labyrinth->getCostHorizontal() << ' '
         << labyrinth->getCostDiagonal() << endl;
 
-
     for(int l = 0; l<lines; l++) {
         for(int c = 0; c<columns; c++) {
             out << labyrinth->map->get(l,c);
@@ -551,21 +550,21 @@ void MainWindow::updatePathTables(QTableWidget *table, list<Node*> l)
     table->setRowCount(l.size());
 
     list<Node*>::iterator it;
-    Node *node;
     int position;
-
-    qDebug() << l.size();
 
     it=l.begin();
     position=0;
     while( it!=l.end() ) {
-        node = *it;
-        table->setItem(position, 2, \
-            new QTableWidgetItem( QString::number( node->getHeuristic()) ));
+
         table->setItem(position, 0, \
-            new QTableWidgetItem( QString::number(node->position.getX()+1) ));
+            new QTableWidgetItem( QString::number( (*it)->position.getX()+1) +":"+ \
+                                  QString::number( (*it)->position.getY()+1) ));
         table->setItem(position, 1, \
-            new QTableWidgetItem( QString::number(node->position.getY()+1) ));
+            new QTableWidgetItem( QString::number( (*it)->getHeuristic()) ));
+        table->setItem(position, 2, \
+            new QTableWidgetItem( (*it)->getParent() != nullptr ? \
+                           ( QString::number( ((*it)->getParent())->position.getX() ) +":"+ \
+                           QString::number( ((*it)->getParent())->position.getY() ) ) : "--" ) );
 
         position++;
         it++;

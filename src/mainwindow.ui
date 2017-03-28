@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>915</width>
+    <width>917</width>
     <height>668</height>
    </rect>
   </property>
@@ -38,12 +38,12 @@
           </property>
           <property name="minimumSize">
            <size>
-            <width>287</width>
+            <width>320</width>
             <height>137</height>
            </size>
           </property>
           <property name="currentIndex">
-           <number>2</number>
+           <number>0</number>
           </property>
           <widget class="QWidget" name="tabLabyrint">
            <attribute name="title">
@@ -60,7 +60,7 @@
               </property>
               <property name="minimumSize">
                <size>
-                <width>267</width>
+                <width>305</width>
                 <height>258</height>
                </size>
               </property>
@@ -152,7 +152,7 @@
               </property>
               <property name="minimumSize">
                <size>
-                <width>267</width>
+                <width>305</width>
                 <height>127</height>
                </size>
               </property>
@@ -211,8 +211,8 @@
               </property>
               <property name="minimumSize">
                <size>
-                <width>267</width>
-                <height>40</height>
+                <width>305</width>
+                <height>45</height>
                </size>
               </property>
               <property name="text">
@@ -250,7 +250,7 @@
               </property>
               <property name="minimumSize">
                <size>
-                <width>265</width>
+                <width>305</width>
                 <height>0</height>
                </size>
               </property>
@@ -279,7 +279,7 @@
               </property>
               <property name="minimumSize">
                <size>
-                <width>265</width>
+                <width>305</width>
                 <height>0</height>
                </size>
               </property>
@@ -308,7 +308,7 @@
               </property>
               <property name="minimumSize">
                <size>
-                <width>265</width>
+                <width>305</width>
                 <height>0</height>
                </size>
               </property>
@@ -372,8 +372,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>915</width>
-     <height>23</height>
+     <width>917</width>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuAbout">
