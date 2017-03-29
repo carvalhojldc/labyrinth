@@ -34,7 +34,7 @@ public:
         this->h = h;
     }
 
-    inline float getHeuristic() const { return g+h; }
+    inline float getHeuristic() const { return (g+h); }
 
     inline float getG() const { return g; }
     inline void setG(const float g) { this->g = g; }

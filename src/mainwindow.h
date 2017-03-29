@@ -40,6 +40,7 @@ private slots:
 
     void UI_clear();
     void UI_clearBoard();
+    void UI_clearBoardSearch();
     void UI_setCellValue(int line, int column, int value);
     void UI_createCellsBoard(int startLine, int endLine, int startColumn, int endColumn);
 

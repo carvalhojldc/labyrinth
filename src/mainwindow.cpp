@@ -35,6 +35,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionHelp,            SIGNAL(triggered(bool)), this, SLOT(UI_help()));
 
     connect(ui->pb_clearBoard, SIGNAL(clicked(bool)), this, SLOT(UI_clearBoard()));
+    connect(ui->pb_clearSearch, SIGNAL(clicked(bool)), this, SLOT(UI_clearBoardSearch()));
     connect(ui->pb_newBoard,   SIGNAL(clicked(bool)), this, SLOT(UI_newBoard()));
 
     connect(ui->board, SIGNAL(cellClicked(int,int)), this, SLOT(UI_changeCell(int,int)));
@@ -116,13 +117,15 @@ João Leite de Carvalho - carvalhojldc@gmail.com";
 
 void MainWindow::UI_createPathTable(QTableWidget *table)
 {
-    QStringList listColumProcess = {"Position (X:Y)", "Heuristic", "Parent (X:Y)" };
+    table->setEditTriggers(QAbstractItemView::NoEditTriggers);
+
+    QStringList listColumProcess = {"Nó (X:Y)", "Heuristic", "Parent (X:Y)" };
 
     table->setColumnCount(3);
 
-    table->setColumnWidth(2, table->width()*0.33);
-    table->setColumnWidth(0, table->width()*0.33);
-    table->setColumnWidth(1, table->width()*0.33);
+    table->setColumnWidth(2, table->width()*0.3);
+    table->setColumnWidth(0, table->width()*0.3);
+    table->setColumnWidth(1, table->width()*0.3);
 
     table->setHorizontalHeaderLabels(listColumProcess);
 }
@@ -155,6 +158,10 @@ void MainWindow::UI_setConfig()
     ui->rb_start->setIcon(QIcon("../icons/colors/" + colors.start + ".png"));
     ui->rb_end->setIcon(QIcon("../icons/colors/" + colors.end + ".png"));
     ui->rb_clearCell->setIcon(QIcon("../icons/colors/" + colors.free + ".png"));
+
+    ui->lb_nodeClosed->setStyleSheet("background:" + colors.closedList);
+    ui->lb_nodeOpen->setStyleSheet("background:" + colors.openList);
+    ui->lb_nodePath->setStyleSheet("background:" + colors.path);
 
     ui->cb_costDiagonal->setChecked(true);
     ui->sb_costDiagonal->setEnabled(false);
@@ -202,6 +209,16 @@ void MainWindow::UI_clearBoard()
 
     UI_clear();
 
+}
+
+void MainWindow::UI_clearBoardSearch()
+{
+    for(int l=0; l<labyrinth->map->getNLines(); l++) {
+        for(int c=0; c<labyrinth->map->getNColumns(); c++) {
+            if(labyrinth->map->get(l,c) == CELL_FREE)
+                UI_setCellValue(l,c,CELL_FREE);
+        }
+    }
 }
 
 void MainWindow::UI_setCellValue(int line, int column, int value)
@@ -602,8 +619,8 @@ void MainWindow::updatePathTables(QTableWidget *table, list<Node*> l)
             new QTableWidgetItem( QString::number( (*it)->getHeuristic()) ));
         table->setItem(position, 2, \
             new QTableWidgetItem( (*it)->getParent() != nullptr ? \
-                           ( QString::number( ((*it)->getParent())->position.getX() ) +":"+ \
-                           QString::number( ((*it)->getParent())->position.getY() ) ) : "--" ) );
+                           ( QString::number( ((*it)->getParent())->position.getX()+1 ) +":"+ \
+                           QString::number( ((*it)->getParent())->position.getY()+1 )) : "--" ) );
 
         position++;
         it++;

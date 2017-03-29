@@ -1,20 +1,17 @@
 #include "astar.h"
 
-bool AStar::inList(list<Node*> l, Position position) {
+Node* AStar::inList(list<Node*> l, Position position) {
     list<Node*>::iterator it;
-    for(it=l.begin(); it!=l.end(); it++) {
+    for(it=l.begin(); it!=l.end(); it++)
         if((*it)->position == position)
-            return true;
-    }
-    return false;
+            return (*it);
+
+    return nullptr;
 }
 
-bool AStar::isFree(Node* node, Position neighbor) {
-    Node* parent = node->getParent();
-
+bool AStar::isFree(Position neighbor) {
     if( ( labyrinth->map->get(neighbor.getX(), neighbor.getY()) != CELL_WALL ) && \
-        ( node->position != neighbor) && \
-        ( parent == nullptr || parent->position != neighbor ) )
+        ( inList(closedPath, neighbor) == nullptr ) )
         return true;
 
     return false;
@@ -56,9 +53,9 @@ Node* AStar::getBest(list<Node*> l) {
     list<Node*>::iterator it;
     Node *best = l.front();
 
-    for(it=l.begin(); it!=l.end(); it++) {
-        if((*it) < best) best = (*it);
-    }
+    for(it=l.begin(); it!=l.end(); it++)
+        if( (*it)->getHeuristic() < best->getHeuristic() )
+            best = (*it);
 
     return best;
 }
@@ -92,6 +89,7 @@ void AStar::addInClosedList(Node* node) {
 bool AStar::getNeighbors(Node* node) {
     list<Node*>::iterator it;
     Node *theBest = nullptr;
+    Node *temp = nullptr;
 
     int startLine, endLine, \
         startColumn, endColumn;
@@ -104,57 +102,37 @@ bool AStar::getNeighbors(Node* node) {
     myY == 0 ? startColumn = myY : startColumn = myY-1;
     myY == labyrinth->map->getNColumns()-1 ? endColumn = myY : endColumn = myY+1;
 
+    //
+    addInClosedList(node);
+
     for(int line=startLine; line<=endLine; line++) {
         for(int column=startColumn; column<=endColumn; column++) {
 
             Position newNeighbor(line,column);
 
-            if(newNeighbor==endNode->position) {
-                theBest = endNode;
-                theBest->setParent(node);
-                break;
-            }
-
-            if( isFree(node, newNeighbor) && !inList(closedPath, newNeighbor) )
+            if( isFree(newNeighbor) )
             {
-                Node *neighbor = new Node(node, newNeighbor, \
-                                getG(newNeighbor, node), \
-                                getH(newNeighbor) );
+                temp = inList(openPath, newNeighbor);
 
-                if(theBest == nullptr)
-                    theBest = neighbor;
-                else if(neighbor->getHeuristic() < theBest->getHeuristic())
-                    theBest = neighbor;
-
-                for(it=openPath.begin(); it!=openPath.end(); it++) {
-                    if((*it)->position == neighbor->position)
-                        break;
-                }
-
-                if(it == openPath.end()) {
+                if(temp == nullptr) {
+                    Node *neighbor = new Node(node, newNeighbor, \
+                                getG(newNeighbor, node), getH(newNeighbor) );
                     addInOpenList(neighbor);
-                } else {
-                    (*it)->setParent(node);
-                    (*it)->setG( getG(newNeighbor, node) );
+                } else if( temp->getG() > getG(newNeighbor, node) ) {
+                    temp->setParent(node);
+                    temp->setG( getG(newNeighbor, node) );
                 }
             }
         }
     }
 
-    if(theBest != nullptr) {
-        addInClosedList(theBest);
-    } else if(openPath.size() != 0) {
+    if(openPath.size() != 0)
         theBest = getBest(openPath);
-        addInClosedList(theBest);
-    } else {
-        return false;
-    }
+    else return false;
 
-    if(theBest->position != endNode->position) {
-        getNeighbors(closedPath.back());
-    } else {
+    if(theBest->position == endNode->position)
         return true;
-    }
+    else getNeighbors(theBest);
 }
 
 AStar::AStar() {
@@ -180,9 +158,7 @@ list<Node*> AStar::getOpenPath() const
 { return openPath; }
 
 void AStar::searchPath() {
-    closedPath.push_back(startNode);
-
-    if(getNeighbors(closedPath.back()))
+    if(getNeighbors(startNode))
     {
         Node *temp;
         myPath.push_front( closedPath.back() );

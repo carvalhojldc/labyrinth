@@ -2,6 +2,7 @@
 #define ASTAR_H
 
 #include <list>
+#include <cmath>
 #include "labyrinth.h"
 #include "node.h"
 
@@ -25,9 +26,9 @@ private:
 
 private:
 
-    bool inList(list<Node*> l, Position position);
+    Node *inList(list<Node*> l, Position position);
 
-    bool isFree(Node* node, Position neighbor);
+    bool isFree(Position neighbor);
 
     float getH(Position position);
 

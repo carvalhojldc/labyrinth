@@ -166,10 +166,16 @@
                <string>Desenho do labirinto</string>
               </property>
               <layout class="QGridLayout" name="gridLayout">
-               <item row="1" column="1">
-                <widget class="QRadioButton" name="rb_clearCell">
+               <item row="3" column="0">
+                <widget class="QLabel" name="lb_nodePath">
+                 <property name="maximumSize">
+                  <size>
+                   <width>80</width>
+                   <height>16777215</height>
+                  </size>
+                 </property>
                  <property name="text">
-                  <string>Apagador</string>
+                  <string>Caminho</string>
                  </property>
                 </widget>
                </item>
@@ -180,10 +186,16 @@
                  </property>
                 </widget>
                </item>
-               <item row="0" column="0">
-                <widget class="QRadioButton" name="rb_start">
+               <item row="4" column="1">
+                <widget class="QPushButton" name="pb_clearSearch">
+                 <property name="minimumSize">
+                  <size>
+                   <width>135</width>
+                   <height>30</height>
+                  </size>
+                 </property>
                  <property name="text">
-                  <string>Partida</string>
+                  <string>Apagar caminho</string>
                  </property>
                 </widget>
                </item>
@@ -194,7 +206,7 @@
                  </property>
                 </widget>
                </item>
-               <item row="3" column="0">
+               <item row="4" column="0">
                 <widget class="QPushButton" name="pb_clearBoard">
                  <property name="minimumSize">
                   <size>
@@ -207,16 +219,46 @@
                  </property>
                 </widget>
                </item>
-               <item row="3" column="1">
-                <widget class="QPushButton" name="pb_clearSearch">
-                 <property name="minimumSize">
+               <item row="1" column="1">
+                <widget class="QRadioButton" name="rb_clearCell">
+                 <property name="text">
+                  <string>Apagador</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="0">
+                <widget class="QRadioButton" name="rb_start">
+                 <property name="text">
+                  <string>Partida</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="1">
+                <widget class="QLabel" name="lb_nodeOpen">
+                 <property name="maximumSize">
                   <size>
-                   <width>135</width>
-                   <height>30</height>
+                   <width>80</width>
+                   <height>16777215</height>
+                  </size>
+                 </property>
+                 <property name="lineWidth">
+                  <number>2</number>
+                 </property>
+                 <property name="text">
+                  <string>Nó aberto</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="0">
+                <widget class="QLabel" name="lb_nodeClosed">
+                 <property name="maximumSize">
+                  <size>
+                   <width>80</width>
+                   <height>16777215</height>
                   </size>
                  </property>
                  <property name="text">
-                  <string>Apagar caminho</string>
+                  <string>Nó fechado</string>
                  </property>
                 </widget>
                </item>
@@ -291,7 +333,7 @@
           </widget>
           <widget class="QWidget" name="tabclosedPath">
            <attribute name="title">
-            <string>Caminho fechado</string>
+            <string>Nó fechado</string>
            </attribute>
            <layout class="QGridLayout" name="gridLayout_9">
             <item row="0" column="0">
@@ -320,7 +362,7 @@
           </widget>
           <widget class="QWidget" name="tabopenPath">
            <attribute name="title">
-            <string>Caminho aberto</string>
+            <string>Nó aberto</string>
            </attribute>
            <layout class="QGridLayout" name="gridLayout_8">
             <item row="0" column="0">
@@ -398,7 +440,7 @@
      <x>0</x>
      <y>0</y>
      <width>955</width>
-     <height>22</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuAbout">
