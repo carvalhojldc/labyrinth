@@ -100,7 +100,6 @@ bool Map::set(int line, int column, int value) {
         return false;
 
     matrix[line][column] = value;
-    //setBoardColor(line, column, value);
 
     if(value == CELL_START) {
         startPosition.setPosition(line, column);
@@ -170,12 +169,6 @@ void Map::setNewSize(int lines, int columns) {
 
 void Map::setBoard(QTableWidget *board) {
     this->board = board;
-
-    qDebug() << "teste da board";
-    //this->board->item(0,0)->setBackground(Qt::red);
-
-    //this->board->item(0, 0)\
-                            ->setBackgroundColor(Qt::red);
 }
 
 Position Map::getStartPosition()

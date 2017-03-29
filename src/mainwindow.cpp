@@ -100,10 +100,8 @@ void MainWindow::UI_help()
 {
     QString helpText = program + "\
 \n\n\
-Este programa tem como objetivo aplicar o\n\
-algoritmo A* na resolução de rotas.\n\n\
-Defina um ponto de partida, um ponto final\n\
-e crie o labirinto a ser resolvido.\n\n\
+Este programa tem como objetivo mostrar o\n\
+algoritmo A* durante a resolução de rotas.\n\n\
 https://carvalhojldc.github.com/labyrinth\n\n\
 João Leite de Carvalho - carvalhojldc@gmail.com";
 
@@ -461,41 +459,6 @@ void MainWindow::UI_ImportLabyrinth()
             "Text File (*.txt)");
 
     if( importLabyrinthFile.isEmpty() == true ) return;
-/*
-    if(readLabyrinthFile(labyrinth, importLabyrinthFile) == false) {
-        QMessageBox::critical(
-             0,
-             "Erro na leitura",
-             "Configuração inválida no arquivo \n" + importLabyrinthFile);
-    } else {
-
-        UI_clear();
-        UI_resizeBoard(labyrinth->map->getNLines(), labyrinth->map->getNColumns());
-
-        for(int l=0; l < labyrinth->map->getNLines(); l++) {
-            for(int c=0; c < labyrinth->map->getNColumns(); c++) {
-                UI_setCellValue(l,c,labyrinth->map->get(l,c));
-            }
-        }
-
-        UI_updateUI();
-
-    }
-*/
-    //qDebug() << labyrinthTemp->map->getNLines();
-
-   /* if(labyrinthTemp != NULL) {
-        delete labyrinth;
-        labyrinth = labyrinthTemp;
-
-        //qDebug() << labyrinth->map->getNLines();
-    } else {
-        QMessageBox::critical(
-            0,
-            "Erro na leitura",
-            "Configuração inválida no arquivo \n" + importLabyrinthFile);
-    }
-*/
 
     if( UI_ReadLabyrinthFile(importLabyrinthFile) == false ) {
        QMessageBox::critical(
@@ -564,8 +527,6 @@ void MainWindow::UI_SaveLabyrinth()
         saveLabyrinthFile += ".txt";
 
     UI_WriteLabyrinthFile(saveLabyrinthFile);
-
-   //writeLabyrinthFile(labyrinth, saveLabyrinthFile);
 }
 
 void MainWindow::UI_newCostDiagonal()
@@ -587,7 +548,6 @@ void MainWindow::UI_EditCostDiagonal(bool value)
     ui->sb_costDiagonal->setDisabled(value);
 }
 
-/*
 float MainWindow::getDiagonal(float a, float b)
 {
     float cost;
@@ -598,8 +558,6 @@ float MainWindow::getDiagonal(float a, float b)
     cost = int(cost*d);
     return cost/d;
 }
-*/
-
 
 void MainWindow::updatePathTables(QTableWidget *table, list<Node*> l)
 {

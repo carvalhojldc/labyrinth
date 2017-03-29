@@ -10,7 +10,6 @@
 
 #include "labyrinth.h"
 #include "astar.h"
-#include "file.h"
 
 #include <QDebug>
 
@@ -18,7 +17,7 @@ namespace Ui {
 class MainWindow;
 }
 
-class MainWindow : public QMainWindow, public File
+class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
@@ -66,7 +65,7 @@ private slots:
     void start();
 
 private:
-    //float getDiagonal(float a, float b);
+    float getDiagonal(float a, float b);
 
     void updatePathTables(QTableWidget *table, list<Node*> l);
 
@@ -75,7 +74,7 @@ private:
 
     //File *acessFile;
 
-    QString program = "CJL Labyrinth - A* v0.2.1 ";
+    QString program = "CJL Labyrinth - A* v1.0.0 ";
 
     // for import/save labyrinth file
     QString userName;

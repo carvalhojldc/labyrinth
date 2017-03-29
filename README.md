@@ -1,3 +1,4 @@
 # Labyrinth
 
-Implementação do algoritmo A* para resolver o problema de um labirinto
+Implementação do algoritmo A* para a resolução de rotas
+
