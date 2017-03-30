@@ -48,7 +48,7 @@ public:
 
     AStar();
 
-    AStar(Labyrinth* labyrinth);
+    AStar(Labyrinth* labyrinth, int distanceType);
 
     list<Node*> getMyPath() const;
 

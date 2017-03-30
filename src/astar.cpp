@@ -139,10 +139,10 @@ AStar::AStar() {
     labyrinth = nullptr;
 }
 
-AStar::AStar(Labyrinth* labyrinth) {
+AStar::AStar(Labyrinth* labyrinth, int distanceType) {
     this->labyrinth = labyrinth;
 
-    distanceType = EUCLIDEAN_DISTANCE;
+    this->distanceType = distanceType;
 
     startNode = new Node(nullptr, labyrinth->map->getStartPosition());
     endNode   = new Node(nullptr, labyrinth->map->getEndPosition());

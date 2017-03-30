@@ -43,7 +43,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->sb_costHorizontal, SIGNAL(valueChanged(double)), this, SLOT(UI_newCostDiagonal()));
     connect(ui->sb_costVertical,   SIGNAL(valueChanged(double)), this, SLOT(UI_newCostDiagonal()));
 
-    connect(ui->sb_costDiagonal,   SIGNAL(valueChanged(double)), this, SLOT(UI_changeButtonUpdate()));
+    //connect(ui->sb_costDiagonal,   SIGNAL(valueChanged(double)), this, SLOT(UI_changeButtonUpdate()));
     connect(ui->sb_columns,        SIGNAL(valueChanged(int)), this, SLOT(UI_changeButtonUpdate()));
     connect(ui->sb_lines,          SIGNAL(valueChanged(int)), this, SLOT(UI_changeButtonUpdate()));
 
@@ -117,13 +117,13 @@ void MainWindow::UI_createPathTable(QTableWidget *table)
 {
     table->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
-    QStringList listColumProcess = {"Nó (X:Y)", "Heuristic", "Parent (X:Y)" };
+    QStringList listColumProcess = {"Nó X:Y", "f'", "G", "H", "Parent X:Y" };
+    int sizeList = listColumProcess.size();
 
-    table->setColumnCount(3);
+    table->setColumnCount(sizeList);
 
-    table->setColumnWidth(2, table->width()*0.3);
-    table->setColumnWidth(0, table->width()*0.3);
-    table->setColumnWidth(1, table->width()*0.3);
+    for(int i=0; i<sizeList; i++)
+        table->setColumnWidth(i, table->width() / sizeList );
 
     table->setHorizontalHeaderLabels(listColumProcess);
 }
@@ -537,8 +537,6 @@ void MainWindow::UI_newCostDiagonal()
         float costDiagonal = getDiagonal(costHorizontal, costVertical);
 
         ui->sb_costDiagonal->setValue(costDiagonal);
-    } else {
-        UI_changeButtonUpdate();
     }
 
 }
@@ -576,6 +574,10 @@ void MainWindow::updatePathTables(QTableWidget *table, list<Node*> l)
         table->setItem(position, 1, \
             new QTableWidgetItem( QString::number( (*it)->getHeuristic()) ));
         table->setItem(position, 2, \
+            new QTableWidgetItem( QString::number( (*it)->getG()) ));
+        table->setItem(position, 3, \
+            new QTableWidgetItem( QString::number( (*it)->getH()) ));
+        table->setItem(position, 4, \
             new QTableWidgetItem( (*it)->getParent() != nullptr ? \
                            ( QString::number( ((*it)->getParent())->position.getX()+1 ) +":"+ \
                            QString::number( ((*it)->getParent())->position.getY()+1 )) : "--" ) );
@@ -609,7 +611,15 @@ void MainWindow::start()
     labyrinth->setCostHorizontal( ui->sb_costHorizontal->value() );
     labyrinth->setCostVertical( ui->sb_costVertical->value() );
 
-    AStar *astar = new AStar(labyrinth);
+    int distanceType;
+    if(ui->rb_manhattan->isChecked()) {
+        distanceType = MANHATTAN_DISTANCE;
+    } else {
+        distanceType = EUCLIDEAN_DISTANCE;
+        ui->rb_euclidean->setChecked(true);
+    }
+
+    AStar *astar = new AStar(labyrinth, distanceType);
 
     astar->searchPath();
 
