@@ -105,6 +105,9 @@ bool AStar::getNeighbors(Node* node) {
     //
     addInClosedList(node);
 
+    float g;
+    float h;
+
     for(int line=startLine; line<=endLine; line++) {
         for(int column=startColumn; column<=endColumn; column++) {
 
@@ -114,13 +117,15 @@ bool AStar::getNeighbors(Node* node) {
             {
                 temp = inList(openPath, newNeighbor);
 
+                g = getG(newNeighbor, node)+node->getG();
+
                 if(temp == nullptr) {
-                    Node *neighbor = new Node(node, newNeighbor, \
-                                getG(newNeighbor, node), getH(newNeighbor) );
+                    h = getH(newNeighbor);
+                    Node *neighbor = new Node(node, newNeighbor, g, h);
                     addInOpenList(neighbor);
-                } else if( temp->getG() > getG(newNeighbor, node) ) {
+                } else if( g<temp->getG() ) {
                     temp->setParent(node);
-                    temp->setG( getG(newNeighbor, node) );
+                    temp->setG( g );
                 }
             }
         }
@@ -130,8 +135,10 @@ bool AStar::getNeighbors(Node* node) {
         theBest = getBest(openPath);
     else return false;
 
-    if(theBest->position == endNode->position)
+    if(theBest->position == endNode->position) {
+        addInClosedList(theBest);
         return true;
+    }
     else getNeighbors(theBest);
 }
 
@@ -146,6 +153,8 @@ AStar::AStar(Labyrinth* labyrinth, int distanceType) {
 
     startNode = new Node(nullptr, labyrinth->map->getStartPosition());
     endNode   = new Node(nullptr, labyrinth->map->getEndPosition());
+
+    startNode->setH( getH(startNode->position));
 }
 
 list<Node*> AStar::getMyPath() const

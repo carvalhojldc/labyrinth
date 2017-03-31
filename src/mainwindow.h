@@ -74,7 +74,7 @@ private:
 
     //File *acessFile;
 
-    QString program = "CJL Labyrinth - A* v1.0.1 ";
+    QString program = "CJL Labyrinth - A* v1.0.2 ";
 
     // for import/save labyrinth file
     QString userName;

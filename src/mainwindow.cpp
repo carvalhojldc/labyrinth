@@ -175,6 +175,9 @@ void MainWindow::UI_setBoard()
 
     UI_createCellsBoard(0, lines, 0, columns);
 
+    ui->board->verticalHeader()->setVisible(true);
+    ui->board->horizontalHeader()->setVisible(true);
+
     ui->board->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     ui->board->verticalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
@@ -606,6 +609,8 @@ void MainWindow::start()
 
         return;
     }
+
+    UI_clearBoardSearch();
 
     labyrinth->setCostDiagonal( ui->sb_costDiagonal->value() );
     labyrinth->setCostHorizontal( ui->sb_costHorizontal->value() );

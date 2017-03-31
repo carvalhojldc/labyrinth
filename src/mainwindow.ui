@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>955</width>
+    <width>971</width>
     <height>668</height>
    </rect>
   </property>
@@ -113,6 +113,9 @@
                    <height>23</height>
                   </size>
                  </property>
+                 <property name="maximum">
+                  <double>999999999.990000009536743</double>
+                 </property>
                 </widget>
                </item>
                <item row="1" column="0">
@@ -129,6 +132,9 @@
                    <width>0</width>
                    <height>23</height>
                   </size>
+                 </property>
+                 <property name="maximum">
+                  <double>999999999.990000009536743</double>
                  </property>
                  <property name="singleStep">
                   <double>0.500000000000000</double>
@@ -170,6 +176,9 @@
                    <width>0</width>
                    <height>23</height>
                   </size>
+                 </property>
+                 <property name="maximum">
+                  <double>999999999.990000009536743</double>
                  </property>
                 </widget>
                </item>
@@ -251,6 +260,9 @@
                    <height>23</height>
                   </size>
                  </property>
+                 <property name="maximum">
+                  <number>999999999</number>
+                 </property>
                 </widget>
                </item>
                <item row="1" column="0" rowspan="2">
@@ -273,6 +285,9 @@
                    <width>0</width>
                    <height>23</height>
                   </size>
+                 </property>
+                 <property name="maximum">
+                  <number>999999999</number>
                  </property>
                 </widget>
                </item>
@@ -599,7 +614,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>955</width>
+     <width>971</width>
      <height>23</height>
     </rect>
    </property>
@@ -643,6 +658,29 @@
   </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <tabstops>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>tableMyPath</tabstop>
+  <tabstop>sb_lines</tabstop>
+  <tabstop>sb_columns</tabstop>
+  <tabstop>pb_newBoard</tabstop>
+  <tabstop>rb_start</tabstop>
+  <tabstop>rb_end</tabstop>
+  <tabstop>rb_wall</tabstop>
+  <tabstop>pb_clearBoard</tabstop>
+  <tabstop>rb_clearCell</tabstop>
+  <tabstop>pb_clearSearch</tabstop>
+  <tabstop>sb_costHorizontal</tabstop>
+  <tabstop>sb_costVertical</tabstop>
+  <tabstop>cb_costDiagonal</tabstop>
+  <tabstop>sb_costDiagonal</tabstop>
+  <tabstop>rb_manhattan</tabstop>
+  <tabstop>rb_euclidean</tabstop>
+  <tabstop>pb_start</tabstop>
+  <tabstop>tableClosedPath</tabstop>
+  <tabstop>tableOpenPath</tabstop>
+  <tabstop>board</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
